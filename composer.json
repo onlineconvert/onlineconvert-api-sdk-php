@@ -3,7 +3,7 @@
   "description": "Sdk for using the Online Convert Api version 2",
   "type": "library",
   "keywords": ["qaamgo", "swagger", "php", "sdk", "api", "REST"],
-  "homepage": "https://github.com/onlineconvert/onlineconvert-api-sdk-php""
+  "homepage": "https://github.com/onlineconvert/onlineconvert-api-sdk-php"
   "license": "Apache v2",
   "authors": [
     {
