@@ -86,13 +86,13 @@ class InputApi {
       }
       $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // query params
-      if($key !== null) {
-        $queryParams['key'] = $this->apiClient->toQueryValue($key);
-      }
+      
       // header params
       if($token !== null) {
         $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      }// header params
+      if($key !== null) {
+        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
       }
       // path params
       if($job_id !== null) {
@@ -159,13 +159,13 @@ class InputApi {
       }
       $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // query params
-      if($key !== null) {
-        $queryParams['key'] = $this->apiClient->toQueryValue($key);
-      }
+      
       // header params
       if($token !== null) {
         $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      }// header params
+      if($key !== null) {
+        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
       }
       // path params
       if($job_id !== null) {
@@ -241,13 +241,13 @@ class InputApi {
       }
       $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // query params
-      if($key !== null) {
-        $queryParams['key'] = $this->apiClient->toQueryValue($key);
-      }
+      
       // header params
       if($token !== null) {
         $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      }// header params
+      if($key !== null) {
+        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
       }
       // path params
       if($job_id !== null) {
@@ -323,13 +323,13 @@ class InputApi {
       }
       $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // query params
-      if($key !== null) {
-        $queryParams['key'] = $this->apiClient->toQueryValue($key);
-      }
+      
       // header params
       if($token !== null) {
         $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      }// header params
+      if($key !== null) {
+        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
       }
       // path params
       if($job_id !== null) {

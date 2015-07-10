@@ -28,18 +28,24 @@ use \ArrayAccess;
 
 class Conversion implements ArrayAccess {
   static $swaggerTypes = array(
+      'id' => 'string',
       'target' => 'string',
       'category' => 'string',
       'options' => 'object'
   );
 
   static $attributeMap = array(
+      'id' => 'id',
       'target' => 'target',
       'category' => 'category',
       'options' => 'options'
   );
 
   
+  /**
+  * Identifier for the job conversion.
+  */
+  public $id; /* string */
   /**
   * Identifier for the job conversion type.
   */
@@ -54,6 +60,7 @@ class Conversion implements ArrayAccess {
   public $options; /* object */
 
   public function __construct(array $data = null) {
+    $this->id = $data["id"];
     $this->target = $data["target"];
     $this->category = $data["category"];
     $this->options = $data["options"];

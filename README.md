@@ -10,7 +10,7 @@ The QaamGo Online Convert PHP SDK can be installed with [Composer](https://getco
 
     {
         "require": {
-            "online-convert-php-sdk": "~1.0"
+            "qaamgo/onlineconvert-api-sdk": "^1.0"
         }
     }
 

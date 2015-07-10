@@ -33,8 +33,7 @@ class OutputFile implements ArrayAccess {
       'uri' => 'string',
       'filename' => 'string',
       'size' => 'int',
-      'created_at' => 'DateTime',
-      'modified_at' => 'DateTime'
+      'created_at' => 'DateTime'
   );
 
   static $attributeMap = array(
@@ -43,8 +42,7 @@ class OutputFile implements ArrayAccess {
       'uri' => 'uri',
       'filename' => 'filename',
       'size' => 'size',
-      'created_at' => 'created_at',
-      'modified_at' => 'modified_at'
+      'created_at' => 'created_at'
   );
 
   
@@ -72,10 +70,6 @@ class OutputFile implements ArrayAccess {
   * Date and time when the job was created.
   */
   public $created_at; /* DateTime */
-  /**
-  * Date and time when the job was last modified.
-  */
-  public $modified_at; /* DateTime */
 
   public function __construct(array $data = null) {
     $this->id = $data["id"];
@@ -84,7 +78,6 @@ class OutputFile implements ArrayAccess {
     $this->filename = $data["filename"];
     $this->size = $data["size"];
     $this->created_at = $data["created_at"];
-    $this->modified_at = $data["modified_at"];
   }
 
   public function offsetExists($offset) {
