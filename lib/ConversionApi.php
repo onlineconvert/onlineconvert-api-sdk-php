@@ -59,12 +59,12 @@ class ConversionApi {
    *
    * Get list of conversions defined for the current job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return array[Conversion]
    */
-   public function jobsJobIdConversionsGet($token, $key, $job_id) {
+   public function jobsJobIdConversionsGet($x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -88,11 +88,11 @@ class ConversionApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -132,12 +132,12 @@ class ConversionApi {
    * Adds a new conversion to the given job.
    *
    * @param Conversion $body information for the conversion. (required)
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return Conversion
    */
-   public function jobsJobIdConversionsPost($body, $token, $key, $job_id) {
+   public function jobsJobIdConversionsPost($body, $x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'body' is set
       if ($body === null) {
@@ -166,11 +166,11 @@ class ConversionApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -213,13 +213,13 @@ class ConversionApi {
    *
    * Get list of conversions defined for the current job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @param string $conversion_id Identifier for the job conversion. (required)
    * @return Conversion
    */
-   public function jobsJobIdConversionsConversionIdGet($token, $key, $job_id, $conversion_id) {
+   public function jobsJobIdConversionsConversionIdGet($x_oc_token, $x_oc_api_key, $job_id, $conversion_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -248,11 +248,11 @@ class ConversionApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -295,13 +295,13 @@ class ConversionApi {
    *
    * Removes the conversion for a job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @param string $conversion_id Identifier for the job conversion. (required)
    * @return Conversion
    */
-   public function jobsJobIdConversionsConversionIdDelete($token, $key, $job_id, $conversion_id) {
+   public function jobsJobIdConversionsConversionIdDelete($x_oc_token, $x_oc_api_key, $job_id, $conversion_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -330,11 +330,11 @@ class ConversionApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {

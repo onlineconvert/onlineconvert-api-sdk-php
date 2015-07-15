@@ -59,12 +59,12 @@ class InputApi {
    *
    * Get list of binary source files for the conversion.hhh
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return array[InputFile]
    */
-   public function jobsJobIdInputGet($token, $key, $job_id) {
+   public function jobsJobIdInputGet($x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -88,11 +88,11 @@ class InputApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -132,12 +132,12 @@ class InputApi {
    * Cretes a new input for the current job.
    *
    * @param InputFile $body  (required)
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return InputFile
    */
-   public function jobsJobIdInputPost($body, $token, $key, $job_id) {
+   public function jobsJobIdInputPost($body, $x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -161,11 +161,11 @@ class InputApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -208,13 +208,13 @@ class InputApi {
    *
    * Get list of conversions defined for the current job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @param string $file_id Id of the file to download (required)
    * @return InputFile
    */
-   public function jobsJobIdInputFileIdGet($token, $key, $job_id, $file_id) {
+   public function jobsJobIdInputFileIdGet($x_oc_token, $x_oc_api_key, $job_id, $file_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -243,11 +243,11 @@ class InputApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -290,13 +290,13 @@ class InputApi {
    *
    * Removes the input for a job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @param string $file_id Id of the file to download (required)
    * @return InputFile
    */
-   public function jobsJobIdInputFileIdDelete($token, $key, $job_id, $file_id) {
+   public function jobsJobIdInputFileIdDelete($x_oc_token, $x_oc_api_key, $job_id, $file_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -325,11 +325,11 @@ class InputApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {

@@ -33,7 +33,6 @@ class Job implements ArrayAccess {
       'type' => 'string',
       'status' => 'Status',
       'process' => 'boolean',
-      'test' => 'boolean',
       'conversion' => 'array[Conversion]',
       'input' => 'array[InputFile]',
       'callback' => 'string',
@@ -48,7 +47,6 @@ class Job implements ArrayAccess {
       'type' => 'type',
       'status' => 'status',
       'process' => 'process',
-      'test' => 'test',
       'conversion' => 'conversion',
       'input' => 'input',
       'callback' => 'callback',
@@ -78,10 +76,6 @@ class Job implements ArrayAccess {
   * Determine if the job must be processed as soon as it is ready.
   */
   public $process; /* boolean */
-  /**
-  * Determine if it is a test job.
-  */
-  public $test; /* boolean */
   /**
   * Type of conversion or conversions to be carried out.
   */
@@ -113,7 +107,6 @@ class Job implements ArrayAccess {
     $this->type = $data["type"];
     $this->status = $data["status"];
     $this->process = $data["process"];
-    $this->test = $data["test"];
     $this->conversion = $data["conversion"];
     $this->input = $data["input"];
     $this->callback = $data["callback"];

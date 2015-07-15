@@ -60,12 +60,12 @@ class JobsApi {
    * List of jobs active for the current user identified by the key.
    *
    * @param string $status Filter the status of the job. (required)
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param Number $page Pagination for list of elements. (required)
    * @return array[Job]
    */
-   public function jobsGet($status, $token, $key, $page) {
+   public function jobsGet($status, $x_oc_token, $x_oc_api_key, $page) {
       
 
       // parse inputs
@@ -90,11 +90,11 @@ class JobsApi {
         $queryParams['page'] = $this->apiClient->toQueryValue($page);
       }
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       
       
@@ -129,15 +129,15 @@ class JobsApi {
    *
    * Creates a new Job with the user key.
    *
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param Job $body Content of the job. (required)
    * @return Job
    */
-   public function jobsPost($key, $body) {
+   public function jobsPost($x_oc_api_key, $body) {
       
-      // verify the required parameter 'key' is set
-      if ($key === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $key when calling jobsPost');
+      // verify the required parameter 'x_oc_api_key' is set
+      if ($x_oc_api_key === null) {
+        throw new \InvalidArgumentException('Missing the required parameter $x_oc_api_key when calling jobsPost');
       }
       
       // verify the required parameter 'body' is set
@@ -162,8 +162,8 @@ class JobsApi {
 
       
       // header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       
       
@@ -202,12 +202,12 @@ class JobsApi {
    *
    * Get information about a Job
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return Job
    */
-   public function jobsJobIdGet($token, $key, $job_id) {
+   public function jobsJobIdGet($x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -231,11 +231,11 @@ class JobsApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -274,12 +274,12 @@ class JobsApi {
    *
    * Cancels a job created that haven't been started. (Allow to cancel jobs in process.)
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return Job
    */
-   public function jobsJobIdDelete($token, $key, $job_id) {
+   public function jobsJobIdDelete($x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -303,11 +303,11 @@ class JobsApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -347,12 +347,12 @@ class JobsApi {
    * Modifies the job identified by the id, allows to start a created job.
    *
    * @param Job $body Content of the job. (required)
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return Job
    */
-   public function jobsJobIdPatch($body, $token, $key, $job_id) {
+   public function jobsJobIdPatch($body, $x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'body' is set
       if ($body === null) {
@@ -381,11 +381,11 @@ class JobsApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
@@ -428,12 +428,12 @@ class JobsApi {
    *
    * Get list of threads defined for the current job.
    *
-   * @param string $token Token for authentication. (required)
-   * @param string $key Api key for the user to filter. (required)
+   * @param string $x_oc_token Token for authentication for the current job (required)
+   * @param string $x_oc_api_key Api key for the user to filter. (required)
    * @param string $job_id ID of job that needs to be fetched (required)
    * @return array[Thread]
    */
-   public function jobsJobIdThreadsGet($token, $key, $job_id) {
+   public function jobsJobIdThreadsGet($x_oc_token, $x_oc_api_key, $job_id) {
       
       // verify the required parameter 'job_id' is set
       if ($job_id === null) {
@@ -457,11 +457,11 @@ class JobsApi {
 
       
       // header params
-      if($token !== null) {
-        $headerParams['token'] = $this->apiClient->toHeaderValue($token);
+      if($x_oc_token !== null) {
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
       }// header params
-      if($key !== null) {
-        $headerParams['key'] = $this->apiClient->toHeaderValue($key);
+      if($x_oc_api_key !== null) {
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
       }
       // path params
       if($job_id !== null) {
