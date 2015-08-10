@@ -1,12 +1,12 @@
 # Online Convert API2 php SDK
 
-This SDK provides a code base to interact with the API2 for [Online Convert](http://www.online-convert.com/). 
+This SDK provides a code base to interact with the API2  version 2 for [Online Convert](http://www.online-convert.com/).
 
-Since the API2 follows the [Swagger specs](http://swagger.io/) this code has been generated using the [swagger codegenerator](https://github.com/swagger-api/swagger-codegen).
+Since the API version 2 follows the [Swagger specs](http://swagger.io/), this code has been generated using the [swagger code generator](https://github.com/swagger-api/swagger-codegen), base in the curret [API2 schema](https://api2.online-convert.com/schema).
 
 ## Installation
 
-The QaamGo Online Convert PHP SDK can be installed with [Composer](https://getcomposer.org/). Add the QaamGo Online Convert PHP SDK package to your `composer.json` file.
+The Online-Convert.com PHP SDK can be installed using [Composer](https://getcomposer.org/). Add the Online-Convert.com PHP SDK package to your composer.json file.
 
     {
         "require": {
@@ -32,4 +32,4 @@ Simple GET status and conversions from API information.
     
 ## Samples
 
-Included in the SDK there are a few samples ready to work.
+The SDK includes a few samples that are ready for work.
