@@ -1,8 +1,8 @@
-# Online Convert API2 php SDK
+# Online Convert API version 2 PHP SDK
 
-This SDK provides a code base to interact with the API2  version 2 for [Online Convert](http://www.online-convert.com/).
+This SDK provides a code base to interact with the API version 2 for [Online Convert](http://www.online-convert.com/).
 
-Since the API version 2 follows the [Swagger specs](http://swagger.io/), this code has been generated using the [swagger code generator](https://github.com/swagger-api/swagger-codegen), base in the curret [API2 schema](https://api2.online-convert.com/schema).
+Since the API version 2 follows the [Swagger specs](http://swagger.io/), this code has been generated using the [swagger code generator](https://github.com/swagger-api/swagger-codegen), base in the current [API2 schema](https://api2.online-convert.com/schema).
 
 ## Installation
 
