@@ -42,7 +42,7 @@ class ApiClient {
    */
   function __construct($host = null) {
     if ($host === null) {
-      $this->host = 'http://api2.online-convert.com/';
+      $this->host = 'http://api2.online-convert.com';
     } else {
       $this->host = $host;
     }
