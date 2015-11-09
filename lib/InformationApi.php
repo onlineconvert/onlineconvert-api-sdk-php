@@ -37,6 +37,9 @@ class InformationApi {
     }
   }
 
+    /**
+     * @var ApiClient
+     */
   private $apiClient; // instance of the ApiClient
 
   /**
@@ -60,13 +63,12 @@ class InformationApi {
    * Get a list of the valid conversions.
    *
    * @param string $category Category for the conversion. (required)
-   * @param string $target Target for for the conversion. (required)
-   * @param Number $page Pagination for list of elements. (required)
+   * @param string $target Target for for the conversion.
+   * @param Number $page Pagination for list of elements.
    * @return array[Conversion]
    */
-   public function conversionsGet($category, $target, $page) {
+   public function conversionsGet($category, $target = null, $page = null) {
       
-
       // parse inputs
       $resourcePath = "/conversions";
       $resourcePath = str_replace("{format}", "json", $resourcePath);
@@ -119,7 +121,54 @@ class InformationApi {
       $responseObject = $this->apiClient->deserialize($response,'array[Conversion]');
       return $responseObject;
   }
-  
+
+
+    /**
+     * getSchema
+     *
+     * Get API Schema
+
+     * @return $response
+     */
+    public function getSchema() {
+
+
+        // parse inputs
+        $resourcePath = "/schema";
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
+
+        // authentication setting, if any
+        $authSettings = array();
+
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
+
+        if(! $response) {
+            return null;
+        }
+
+        return $response;
+    }
+
   /**
    * statusesGet
    *
@@ -144,12 +193,6 @@ class InformationApi {
       }
       $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      
-      
-      
-      
-      
-
       // for model (json/xml)
       if (isset($_tempBody)) {
         $httpBody = $_tempBody; // $_tempBody is the method argument, if present
@@ -173,6 +216,60 @@ class InformationApi {
       $responseObject = $this->apiClient->deserialize($response,'array[Status]');
       return $responseObject;
   }
-  
+
+
+    /**
+     * statusesGet
+     *
+     * Get a list of the valid statuses.
+     *
+     * @param $job_id
+     * @param string $x_oc_api_key
+     * @return array [Job]
+     * @throws ApiException
+     */
+    public function jobGet($job_id, $x_oc_api_key) {
+
+
+        // parse inputs
+        $resourcePath = "/jobs/{job_id}";
+        $resourcePath = str_replace("{job_id}", $job_id, $resourcePath);
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+
+        // header params
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
+
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
+
+        // authentication setting, if any
+        $authSettings = array();
+
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
+
+        if(! $response) {
+            return null;
+        }
+
+        $responseObject = $this->apiClient->deserialize($response,'array[Job]');
+        return $response;
+    }
 
 }

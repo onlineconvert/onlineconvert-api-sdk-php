@@ -17,6 +17,7 @@
 
 namespace SwaggerClient;
 
+
 class ApiClient {
 
   public static $PATCH = "PATCH";
@@ -159,17 +160,20 @@ class ApiClient {
       }
     }
   }
-  
+
   /**
    * @param string $resourcePath path to method endpoint
    * @param string $method method to call
    * @param array $queryParams parameters to be place in query URL
    * @param array $postData parameters to be placed in POST body
    * @param array $headerParams parameters to be place in request header
+   * @param $authSettings
+   * @param string $server for specify the server where upload a file
    * @return mixed
+   * @throws ApiException
    */
   public function callApi($resourcePath, $method, $queryParams, $postData,
-    $headerParams, $authSettings) {
+    $headerParams, $authSettings, $server = '') {
 
     $headers = array();
 
@@ -187,11 +191,19 @@ class ApiClient {
     if ($postData and in_array('Content-Type: application/x-www-form-urlencoded', $headers)) {
       $postData = http_build_query($postData);
     }
-    else if ((is_object($postData) or is_array($postData)) and !in_array('Content-Type: multipart/form-data', $headers)) { // json model
+    else if ((is_object($postData) or is_array($postData)) and !in_array('Content-Type: multipart/form-data', $headers) and !isset($postData['isFile'])) { // json model
       $postData = json_encode($this->sanitizeForSerialization($postData));
+    } else if (isset($postData['isFile'])) {
+      $fileName = basename($postData['file_path']);
+      $filePath = $postData['file_path'];
+      $fileInfo = finfo_open();
+      $fileContentType = finfo_file($fileInfo, $postData['file_path'], FILEINFO_MIME_TYPE);
+      finfo_close($fileInfo);
+      $postData = [ 'file' => $this->getCurlValue($filePath, $fileContentType, $fileName) ];
     }
 
-    $url = $this->host . $resourcePath;
+    //check the server
+    (empty($server)) ? $url = $this->host . $resourcePath : $url = $server . $resourcePath;
 
     $curl = curl_init();
     // set timeout, if needed
@@ -209,6 +221,9 @@ class ApiClient {
 
     if ($method == self::$POST) {
       curl_setopt($curl, CURLOPT_POST, true);
+      if (isset($postData['isFile'])) {
+          curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+      }
       curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
     } else if ($method == self::$PATCH) {
       curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
@@ -240,6 +255,7 @@ class ApiClient {
     // obtain the HTTP response headers
     curl_setopt($curl, CURLOPT_HEADER, 1);
 
+
     // Make the request
     $response = curl_exec($curl);
     $http_header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
@@ -254,7 +270,7 @@ class ApiClient {
 
     // Handle the response
     if ($response_info['http_code'] == 0) {
-      throw new ApiException("API call to $url timed out: ".serialize($response_info), 0, null, null);
+      throw new ApiException("API call to $url timed out: ".print_r($response_info), 0, null, null);
     } else if ($response_info['http_code'] >= 200 && $response_info['http_code'] <= 299 ) {
       $data = json_decode($http_body);
       if (json_last_error() > 0) { // if response is a string
@@ -441,6 +457,24 @@ class ApiClient {
     } else {
       return implode(',', $content_type);
     }
+  }
+
+  // Helper function courtesy of https://github.com/guzzle/guzzle/blob/3a0787217e6c0246b457e637ddd33332efea1d2a/src/Guzzle/Http/Message/PostFile.php#L90
+  private function getCurlValue($filename, $contentType, $postname)
+  {
+    // PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
+    // See: https://wiki.php.net/rfc/curl-file-upload
+    if (function_exists('curl_file_create')) {
+      return curl_file_create($filename, $contentType, $postname);
+    }
+
+    // Use the old style if using an older version of PHP
+    $value = "@{$this->filename};filename=" . $postname;
+    if ($contentType) {
+      $value .= ';type=' . $contentType;
+    }
+
+    return $value;
   }
 
 }

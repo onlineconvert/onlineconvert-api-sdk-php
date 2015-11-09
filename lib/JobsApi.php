@@ -22,6 +22,8 @@
 
 namespace SwaggerClient;
 
+use SwaggerClient\models\Job;
+
 class JobsApi {
 
   function __construct($apiClient = null) {
@@ -37,6 +39,9 @@ class JobsApi {
     }
   }
 
+    /**
+     * @var ApiClient
+     */
   private $apiClient; // instance of the ApiClient
 
   /**
@@ -134,7 +139,6 @@ class JobsApi {
    * @return Job
    */
    public function jobsPost($x_oc_api_key, $body) {
-      
       // verify the required parameter 'x_oc_api_key' is set
       if ($x_oc_api_key === null) {
         throw new \InvalidArgumentException('Missing the required parameter $x_oc_api_key when calling jobsPost');
@@ -183,7 +187,6 @@ class JobsApi {
 
       // authentication setting, if any
       $authSettings = array();
-
       // make the API Call
       $response = $this->apiClient->callAPI($resourcePath, $method,
                                             $queryParams, $httpBody,
@@ -196,7 +199,64 @@ class JobsApi {
       $responseObject = $this->apiClient->deserialize($response,'Job');
       return $responseObject;
   }
-  
+
+
+    /**
+     * jobsPostFile
+     *
+     * Upload a file for a job
+     *
+     * @param string $x_oc_api_key Api key for the user to filter. (required)
+     * @param Job $body Content of the job. (required)
+     * @param string $file_path the absolute path of a file
+     * @return Job
+     * @throws ApiException
+     */
+    public function jobsPostFile($x_oc_api_key, $body, $file_path) {
+
+        // verify the required parameter 'x_oc_api_key' is set
+        if ($x_oc_api_key === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $x_oc_api_key when calling jobsPostFile');
+        }
+
+        // verify the required parameter 'body' is set
+        if ($body === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling jobsPostFile');
+        }
+
+
+        // parse inputs
+        $resourcePath = "/upload-file/{job_id}";
+        $resourcePath = str_replace("{job_id}", $body['id'], $resourcePath);
+        $method = "POST";
+        $httpBody = [ 'isFile' => true, 'file_path' => $file_path ];
+        $queryParams = array();
+        $headerParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+
+        // header params
+        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
+        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($body['token']);
+
+        // authentication setting, if any
+        $authSettings = array();
+
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings, $body['server']);
+
+        if(! $response) {
+            return null;
+        }
+
+        $responseObject = $this->apiClient->deserialize($response,'Job');
+        return $responseObject;
+    }
+
   /**
    * jobsJobIdGet
    *
