@@ -52,7 +52,7 @@ class Configuration {
   /**
    * Debug file location (log to STDOUT by default)
    */
-  public static $debug_file = 'php://output';
+  public static $debug_file = 'php://stdout';
 
   /*
    *  manually initalize  ApiClient

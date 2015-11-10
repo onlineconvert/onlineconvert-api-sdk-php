@@ -22,281 +22,280 @@
 
 namespace SwaggerClient;
 
-class OutputApi {
+class OutputApi
+{
 
-  function __construct($apiClient = null) {
-    if (null === $apiClient) {
-      if (Configuration::$apiClient === null) {
-        Configuration::$apiClient = new ApiClient(); // create a new API client if not present
-        $this->apiClient = Configuration::$apiClient;
-      }
-      else
-        $this->apiClient = Configuration::$apiClient; // use the default one
-    } else {
-      $this->apiClient = $apiClient; // use the one provided by the user
+    function __construct($apiClient = null)
+    {
+        if (null === $apiClient) {
+            if (Configuration::$apiClient === null) {
+                Configuration::$apiClient = new ApiClient(); // create a new API client if not present
+                $this->apiClient = Configuration::$apiClient;
+            } else
+                $this->apiClient = Configuration::$apiClient; // use the default one
+        } else {
+            $this->apiClient = $apiClient; // use the one provided by the user
+        }
     }
-  }
 
-  private $apiClient; // instance of the ApiClient
+    /**
+     * @var ApiClient
+     */
+    private $apiClient; // instance of the ApiClient
 
-  /**
-   * get the API client
-   */
-  public function getApiClient() {
-    return $this->apiClient;
-  }
+    /**
+     * get the API client
+     */
+    public function getApiClient()
+    {
+        return $this->apiClient;
+    }
 
-  /**
-   * set the API client
-   */
-  public function setApiClient($apiClient) {
-    $this->apiClient = $apiClient;
-  }
+    /**
+     * set the API client
+     */
+    public function setApiClient($apiClient)
+    {
+        $this->apiClient = $apiClient;
+    }
 
-  
-  /**
-   * jobsJobIdOutputGet
-   *
-   * Get list of converted.
-   *
-   * @param string $conversion_id  (required)
-   * @param string $input_id  (required)
-   * @param string $x_oc_token Token for authentication for the current job (required)
-   * @param string $x_oc_api_key Api key for the user to filter. (required)
-   * @param string $job_id ID of job that needs to be fetched (required)
-   * @return array[OutputFile]
-   */
-   public function jobsJobIdOutputGet($conversion_id, $input_id, $x_oc_token, $x_oc_api_key, $job_id) {
-      
-      // verify the required parameter 'job_id' is set
-      if ($job_id === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $job_id when calling jobsJobIdOutputGet');
-      }
-      
 
-      // parse inputs
-      $resourcePath = "/jobs/{job_id}/output";
-      $resourcePath = str_replace("{format}", "json", $resourcePath);
-      $method = "GET";
-      $httpBody = '';
-      $queryParams = array();
-      $headerParams = array();
-      $formParams = array();
-      $_header_accept = $this->apiClient->selectHeaderAccept(array());
-      if (!is_null($_header_accept)) {
-        $headerParams['Accept'] = $_header_accept;
-      }
-      $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+    /**
+     * jobsJobIdOutputGet
+     *
+     * Get list of converted.
+     *
+     * @param string $x_oc_api_key Api key for the user to filter. (required)
+     * @param string $job_id ID of job that needs to be fetched (required)
+     * @param string $x_oc_token Token for authentication for the current job
+     * @param string $conversion_id
+     * @param string $input_id
+     * @return array[OutputFile]
+     */
+    public function jobsJobIdOutputGet($x_oc_api_key, $job_id, $x_oc_token = null, $conversion_id = null, $input_id = null)
+    {
 
-      // query params
-      if($conversion_id !== null) {
-        $queryParams['conversion_id'] = $this->apiClient->toQueryValue($conversion_id);
-      }// query params
-      if($input_id !== null) {
-        $queryParams['input_id'] = $this->apiClient->toQueryValue($input_id);
-      }
-      // header params
-      if($x_oc_token !== null) {
-        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
-      }// header params
-      if($x_oc_api_key !== null) {
+        // parse inputs
+        $resourcePath = "/jobs/{job_id}/output";
+        $resourcePath = str_replace("{format}", "json", $resourcePath);
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+
+        // query params
+        if ($conversion_id !== null) {
+            $queryParams['conversion_id'] = $this->apiClient->toQueryValue($conversion_id);
+        }// query params
+        if ($input_id !== null) {
+            $queryParams['input_id'] = $this->apiClient->toQueryValue($input_id);
+        }
+        // header params
         $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
-      }
-      // path params
-      if($job_id !== null) {
-        $resourcePath = str_replace("{" . "job_id" . "}",
-                                    $this->apiClient->toPathValue($job_id), $resourcePath);
-      }
-      
-      
+        if ($x_oc_token !== null) {
+            $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
+        }
 
-      // for model (json/xml)
-      if (isset($_tempBody)) {
-        $httpBody = $_tempBody; // $_tempBody is the method argument, if present
-      } else if (count($formParams) > 0) {
-        // for HTTP post (form)
-        $httpBody = $formParams;
-      }
+        // path params
+        if ($job_id !== null) {
+            $resourcePath = str_replace("{" . "job_id" . "}",
+                $this->apiClient->toPathValue($job_id), $resourcePath);
+        }
 
-      // authentication setting, if any
-      $authSettings = array();
 
-      // make the API Call
-      $response = $this->apiClient->callAPI($resourcePath, $method,
-                                            $queryParams, $httpBody,
-                                            $headerParams, $authSettings);
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
 
-      if(! $response) {
-        return null;
-      }
+        // authentication setting, if any
+        $authSettings = array();
 
-      $responseObject = $this->apiClient->deserialize($response,'array[OutputFile]');
-      return $responseObject;
-  }
-  
-  /**
-   * jobsJobIdOutputFileIdGet
-   *
-   * Get information about an output file source.
-   *
-   * @param string $x_oc_token Token for authentication for the current job (required)
-   * @param string $x_oc_api_key Api key for the user to filter. (required)
-   * @param string $job_id ID of job that needs to be fetched (required)
-   * @param string $file_id Id of the file to download (required)
-   * @return array[OutputFile]
-   */
-   public function jobsJobIdOutputFileIdGet($x_oc_token, $x_oc_api_key, $job_id, $file_id) {
-      
-      // verify the required parameter 'job_id' is set
-      if ($job_id === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $job_id when calling jobsJobIdOutputFileIdGet');
-      }
-      
-      // verify the required parameter 'file_id' is set
-      if ($file_id === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $file_id when calling jobsJobIdOutputFileIdGet');
-      }
-      
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
 
-      // parse inputs
-      $resourcePath = "/jobs/{job_id}/output/{file_id}";
-      $resourcePath = str_replace("{format}", "json", $resourcePath);
-      $method = "GET";
-      $httpBody = '';
-      $queryParams = array();
-      $headerParams = array();
-      $formParams = array();
-      $_header_accept = $this->apiClient->selectHeaderAccept(array());
-      if (!is_null($_header_accept)) {
-        $headerParams['Accept'] = $_header_accept;
-      }
-      $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+        if (!$response) {
+            return null;
+        }
 
-      
-      // header params
-      if($x_oc_token !== null) {
-        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
-      }// header params
-      if($x_oc_api_key !== null) {
-        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
-      }
-      // path params
-      if($job_id !== null) {
-        $resourcePath = str_replace("{" . "job_id" . "}",
-                                    $this->apiClient->toPathValue($job_id), $resourcePath);
-      }// path params
-      if($file_id !== null) {
-        $resourcePath = str_replace("{" . "file_id" . "}",
-                                    $this->apiClient->toPathValue($file_id), $resourcePath);
-      }
-      
-      
+        $responseObject = $this->apiClient->deserialize($response, 'array[OutputFile]');
+        return $responseObject;
+    }
 
-      // for model (json/xml)
-      if (isset($_tempBody)) {
-        $httpBody = $_tempBody; // $_tempBody is the method argument, if present
-      } else if (count($formParams) > 0) {
-        // for HTTP post (form)
-        $httpBody = $formParams;
-      }
+    /**
+     * jobsJobIdOutputFileIdGet
+     *
+     * Get information about an output file source.
+     *
+     * @param string $x_oc_token Token for authentication for the current job (required)
+     * @param string $x_oc_api_key Api key for the user to filter. (required)
+     * @param string $job_id ID of job that needs to be fetched (required)
+     * @param string $file_id Id of the file to download (required)
+     * @return array[OutputFile]
+     */
+    public function jobsJobIdOutputFileIdGet($x_oc_token, $x_oc_api_key, $job_id, $file_id)
+    {
 
-      // authentication setting, if any
-      $authSettings = array();
+        // verify the required parameter 'job_id' is set
+        if ($job_id === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $job_id when calling jobsJobIdOutputFileIdGet');
+        }
 
-      // make the API Call
-      $response = $this->apiClient->callAPI($resourcePath, $method,
-                                            $queryParams, $httpBody,
-                                            $headerParams, $authSettings);
+        // verify the required parameter 'file_id' is set
+        if ($file_id === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $file_id when calling jobsJobIdOutputFileIdGet');
+        }
 
-      if(! $response) {
-        return null;
-      }
 
-      $responseObject = $this->apiClient->deserialize($response,'array[OutputFile]');
-      return $responseObject;
-  }
-  
-  /**
-   * jobsJobIdOutputFileIdDelete
-   *
-   * Deletes a file from the output.
-   *
-   * @param string $x_oc_token Token for authentication for the current job (required)
-   * @param string $x_oc_api_key Api key for the user to filter. (required)
-   * @param string $job_id ID of job that needs to be fetched (required)
-   * @param string $file_id Id of the file to download (required)
-   * @return array[OutputFile]
-   */
-   public function jobsJobIdOutputFileIdDelete($x_oc_token, $x_oc_api_key, $job_id, $file_id) {
-      
-      // verify the required parameter 'job_id' is set
-      if ($job_id === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $job_id when calling jobsJobIdOutputFileIdDelete');
-      }
-      
-      // verify the required parameter 'file_id' is set
-      if ($file_id === null) {
-        throw new \InvalidArgumentException('Missing the required parameter $file_id when calling jobsJobIdOutputFileIdDelete');
-      }
-      
+        // parse inputs
+        $resourcePath = "/jobs/{job_id}/output/{file_id}";
+        $resourcePath = str_replace("{format}", "json", $resourcePath);
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // parse inputs
-      $resourcePath = "/jobs/{job_id}/output/{file_id}";
-      $resourcePath = str_replace("{format}", "json", $resourcePath);
-      $method = "DELETE";
-      $httpBody = '';
-      $queryParams = array();
-      $headerParams = array();
-      $formParams = array();
-      $_header_accept = $this->apiClient->selectHeaderAccept(array());
-      if (!is_null($_header_accept)) {
-        $headerParams['Accept'] = $_header_accept;
-      }
-      $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      
-      // header params
-      if($x_oc_token !== null) {
-        $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
-      }// header params
-      if($x_oc_api_key !== null) {
-        $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
-      }
-      // path params
-      if($job_id !== null) {
-        $resourcePath = str_replace("{" . "job_id" . "}",
-                                    $this->apiClient->toPathValue($job_id), $resourcePath);
-      }// path params
-      if($file_id !== null) {
-        $resourcePath = str_replace("{" . "file_id" . "}",
-                                    $this->apiClient->toPathValue($file_id), $resourcePath);
-      }
-      
-      
+        // header params
+        if ($x_oc_token !== null) {
+            $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
+        }// header params
+        if ($x_oc_api_key !== null) {
+            $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
+        }
+        // path params
+        if ($job_id !== null) {
+            $resourcePath = str_replace("{" . "job_id" . "}",
+                $this->apiClient->toPathValue($job_id), $resourcePath);
+        }// path params
+        if ($file_id !== null) {
+            $resourcePath = str_replace("{" . "file_id" . "}",
+                $this->apiClient->toPathValue($file_id), $resourcePath);
+        }
 
-      // for model (json/xml)
-      if (isset($_tempBody)) {
-        $httpBody = $_tempBody; // $_tempBody is the method argument, if present
-      } else if (count($formParams) > 0) {
-        // for HTTP post (form)
-        $httpBody = $formParams;
-      }
 
-      // authentication setting, if any
-      $authSettings = array();
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
 
-      // make the API Call
-      $response = $this->apiClient->callAPI($resourcePath, $method,
-                                            $queryParams, $httpBody,
-                                            $headerParams, $authSettings);
+        // authentication setting, if any
+        $authSettings = array();
 
-      if(! $response) {
-        return null;
-      }
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
 
-      $responseObject = $this->apiClient->deserialize($response,'array[OutputFile]');
-      return $responseObject;
-  }
-  
+        if (!$response) {
+            return null;
+        }
+
+        $responseObject = $this->apiClient->deserialize($response, 'array[OutputFile]');
+        return $responseObject;
+    }
+
+    /**
+     * jobsJobIdOutputFileIdDelete
+     *
+     * Deletes a file from the output.
+     *
+     * @param string $x_oc_token Token for authentication for the current job (required)
+     * @param string $x_oc_api_key Api key for the user to filter. (required)
+     * @param string $job_id ID of job that needs to be fetched (required)
+     * @param string $file_id Id of the file to download (required)
+     * @return array[OutputFile]
+     */
+    public function jobsJobIdOutputFileIdDelete($x_oc_token, $x_oc_api_key, $job_id, $file_id)
+    {
+
+        // verify the required parameter 'job_id' is set
+        if ($job_id === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $job_id when calling jobsJobIdOutputFileIdDelete');
+        }
+
+        // verify the required parameter 'file_id' is set
+        if ($file_id === null) {
+            throw new \InvalidArgumentException('Missing the required parameter $file_id when calling jobsJobIdOutputFileIdDelete');
+        }
+
+
+        // parse inputs
+        $resourcePath = "/jobs/{job_id}/output/{file_id}";
+        $resourcePath = str_replace("{format}", "json", $resourcePath);
+        $method = "DELETE";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+
+
+        // header params
+        if ($x_oc_token !== null) {
+            $headerParams['X-Oc-Token'] = $this->apiClient->toHeaderValue($x_oc_token);
+        }// header params
+        if ($x_oc_api_key !== null) {
+            $headerParams['X-Oc-Api-Key'] = $this->apiClient->toHeaderValue($x_oc_api_key);
+        }
+        // path params
+        if ($job_id !== null) {
+            $resourcePath = str_replace("{" . "job_id" . "}",
+                $this->apiClient->toPathValue($job_id), $resourcePath);
+        }// path params
+        if ($file_id !== null) {
+            $resourcePath = str_replace("{" . "file_id" . "}",
+                $this->apiClient->toPathValue($file_id), $resourcePath);
+        }
+
+
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
+
+        // authentication setting, if any
+        $authSettings = array();
+
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
+
+        if (!$response) {
+            return null;
+        }
+
+        $responseObject = $this->apiClient->deserialize($response, 'array[OutputFile]');
+        return $responseObject;
+    }
+
 
 }
