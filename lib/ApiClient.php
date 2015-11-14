@@ -188,7 +188,9 @@ class ApiClient
     public function callApi($resourcePath, $method, $queryParams, $postData,
                             $headerParams, $authSettings, $server = '')
     {
+        var_dump('server: ' . $server);
 
+        $curl = curl_init();
         $headers = array();
 
         # determine authentication setting
@@ -213,12 +215,12 @@ class ApiClient
             $fileContentType = finfo_file($fileInfo, $postData['file_path'], FILEINFO_MIME_TYPE);
             finfo_close($fileInfo);
             $postData = ['file' => $this->getCurlValue($filePath, $fileContentType, $fileName)];
+
         }
 
         //check the server
         (empty($server)) ? $url = $this->host . $resourcePath : $url = $server . $resourcePath;
 
-        $curl = curl_init();
         // set timeout, if needed
         if ($this->curl_timeout != 0) {
             curl_setopt($curl, CURLOPT_TIMEOUT, $this->curl_timeout);
@@ -227,18 +229,22 @@ class ApiClient
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
         if (!empty($queryParams)) {
             $url = ($url . '?' . http_build_query($queryParams));
         }
-
         if ($method == self::$POST) {
             curl_setopt($curl, CURLOPT_POST, true);
-            if (isset($postData['isFile'])) {
-                curl_setopt($curl, CURLINFO_HEADER_OUT, true);
-//                curl_setopt($curl, CURLOPT_NOPROGRESS, false);
-//                curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, array($this, 'uploadFileCallback'));
-            }
+            curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+            curl_setopt($curl, CURLOPT_NOPROGRESS, false);
+            $x =  '';
+            curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function ($resource, $download_size = 0, $downloaded = 0, $upload_size = 0, $uploaded = 0) use ($x) {
+//                var_dump($resource, $download_size, $downloaded, $upload_size, $uploaded);
+                if($download_size > 0) {
+                    var_dump($upload_size, $upload_size);
+                    var_dump(($download_size / $downloaded) * 100);
+                }
+            });
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
         } else if ($method == self::$PATCH) {
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PATCH");
@@ -484,27 +490,27 @@ class ApiClient
     // Helper function courtesy of https://github.com/guzzle/guzzle/blob/3a0787217e6c0246b457e637ddd33332efea1d2a/src/Guzzle/Http/Message/PostFile.php#L90
     private function getCurlValue($filename, $contentType, $postname)
     {
+        var_dump($filename, $contentType, $postname);
         // PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
         // See: https://wiki.php.net/rfc/curl-file-upload
         if (function_exists('curl_file_create')) {
             return curl_file_create($filename, $contentType, $postname);
         }
 
-        // Use the old style if using an older version of PHP
-        $value = "@{$this->filename};filename=" . $postname;
-        if ($contentType) {
-            $value .= ';type=' . $contentType;
-        }
+        throw new ApiException('Function "curl_file_create" not exists.');
 
-        return $value;
     }
 
-    private function uploadFileCallback($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected, $total_bytes_up_so_far)
+    function uploadFileCallback($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected)
     {
+        var_dump('dfsasfds');
         if ($total_bytes_up_expected > 0) {
-            var_dump($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected, $total_bytes_up_so_far);
-            echo (round(($total_bytes_up_so_far / $total_bytes_up_expected) * 100));
+            var_dump($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected);
+//            $nPourcent = round(($total_bytes_up_so_far / $total_bytes_up_expected)*100);
+//            echo (round(($total_bytes_up_so_far / $total_bytes_up_expected) * 100));
         }
     }
+
+
 }
 
