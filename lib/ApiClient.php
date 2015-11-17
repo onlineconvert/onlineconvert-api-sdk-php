@@ -439,7 +439,7 @@ class ApiClient
             settype($data, 'bool');
             $deserialized = $data;
         } else {
-            $class = "SwaggerClient\\models\\" . $class;
+            $class = "Qaamgo\\Models\\" . $class;
             $instance = new $class();
             foreach ($instance::$swaggerTypes as $property => $type) {
                 $original_property_name = $instance::$attributeMap[$property];
