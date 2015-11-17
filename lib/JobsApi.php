@@ -22,7 +22,7 @@
 
 namespace Qaamgo;
 
-use SwaggerClient\models\Job;
+use Qaamgo\Models\Job;
 
 class JobsApi
 {

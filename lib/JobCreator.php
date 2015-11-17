@@ -38,7 +38,9 @@ class JobCreator
 
     private $createdJob;
 
-    public function __construct($https = false, $host = null, $apiKey)
+    private $synchronous;
+
+    public function __construct($https = false, $host = null, $apiKey, $synchronous = true)
     {
         $this->client = new ApiClient($https, $host);
         $this->apiKey = $apiKey;
@@ -47,6 +49,7 @@ class JobCreator
         $this->job = new Job();
         $this->jobsApi = new JobsApi($this->client);
         $this->conversion = new Conversion();
+        $this->synchronous = $synchronous;
     }
 
     /**
@@ -77,6 +80,14 @@ class JobCreator
             $this->optionsValidator->validate($options, $schema);
             $this->conversion->options = $options;
         }
+
+        $this->createJobForApi();
+
+        if ($this->synchronous) {
+            $this->lookStatus($this->createdJob->id);
+        }
+
+        return $this->getJobInfo($this->createdJob->id);
     }
 
     /**
@@ -113,12 +124,12 @@ class JobCreator
      *
      * @return Status|String|Array
      */
-    public function lookStatus()
+    public function lookStatus($jobId)
     {
         /** @var Status $status */
         $status = new Status();
         while ($status->code != Constants::STATUS_COMPLETED) {
-            $status = $this->getStatus();
+            $status = $this->getStatus($jobId);
             if ($status->code == Constants::STATUS_FAILED) {
                 throw new ConversionException(
                     'Job Status: ' . Constants::STATUS_FAILED . 'Message: ' . $status->info
@@ -144,5 +155,15 @@ class JobCreator
     public function getStatus($jobId)
     {
         return $this->jobsApi->jobsJobIdGet($this->apiKey, $jobId)->status;
+    }
+
+
+    /**
+     * @param $jobId
+     * @return mixed
+     */
+    public function getJobInfo($jobId)
+    {
+        return $this->jobsApi->jobsJobIdGet($this->apiKey, $jobId);
     }
 }
