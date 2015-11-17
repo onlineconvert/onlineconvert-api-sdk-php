@@ -13,7 +13,17 @@ use Qaamgo\Models\InputFile;
 class Async extends  Sync implements Interfaced
 {
 
-    public function createAsyncJob($category, $target, $input, $callback, $options = [])
+    /**
+     * Create a job that will send a notification.
+     *
+     * @param $category
+     * @param $target
+     * @param $input
+     * @param string $callbackUrl the url where the notification will be sent
+     * @param array $options
+     * @return mixed
+     */
+    public function createAsyncJob($category, $target, $input, $callbackUrl, $options = [])
     {
         $inputFile = new InputFile();
         $inputFile->source = $input;
@@ -23,7 +33,7 @@ class Async extends  Sync implements Interfaced
         $this->conversion->category = $category;
         $this->conversion->target = $target;
 
-        $this->job->callback = $callback;
+        $this->job->callback = $callbackUrl;
 
         $this->validateOptions($options, $this->conversion->category, $this->conversion->target);
 

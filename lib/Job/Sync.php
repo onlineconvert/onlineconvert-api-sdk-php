@@ -10,6 +10,7 @@ use Qaamgo\JobsApi;
 use Qaamgo\Models\Conversion;
 use Qaamgo\Models\InputFile;
 use Qaamgo\Models\Job;
+use Qaamgo\Output;
 use Qaamgo\Validator\Options;
 use Qaamgo\Models\Status;
 use Qaamgo\Helper\Common;
@@ -48,9 +49,12 @@ class Sync implements Interfaced
         $this->job = new Job();
         $this->jobsApi = new JobsApi($this->client);
         $this->conversion = new Conversion();
+        $this->output = new Output($this->apiKey);
     }
 
     /**
+     * Create a job which process finish when the coversion is completed or fails
+     *
      * @param $category
      * @param $target
      * @param $input
@@ -90,6 +94,8 @@ class Sync implements Interfaced
     }
 
     /**
+     * Post file to the url that is assigned to the job
+     *
      * @param InputFile $file
      * @return bool
      */
@@ -148,13 +154,20 @@ class Sync implements Interfaced
 
     /**
      * @param $jobId
-     * @return mixed
+     * @return Job
      */
     public function getJobInfo($jobId)
     {
         return $this->jobsApi->jobsJobIdGet($this->apiKey, $jobId);
     }
 
+    /**
+     * Set the type of the source to convert
+     *
+     * @param InputFile $inputFile
+     * @param $input
+     * @return InputFile
+     */
     protected function filterInput(InputFile $inputFile, $input)
     {
         if (filter_var($input, FILTER_VALIDATE_URL)) {
@@ -167,6 +180,12 @@ class Sync implements Interfaced
         return $inputFile;
     }
 
+    /**
+     * Validate the options of the conversion whit a json schema
+     * @param $options
+     * @param $category
+     * @param $target
+     */
     protected function validateOptions($options, $category, $target)
     {
         if (empty($options)) {
@@ -176,5 +195,10 @@ class Sync implements Interfaced
         $schema = $this->schemaPersister->getOptionsSchema($category, $target);
         $this->optionsValidator->validate($options, $schema);
         $this->conversion->options = $options;
+    }
+
+    public function getOutput($jobId)
+    {
+        return $this->output->getJobOutput($jobId);
     }
 }

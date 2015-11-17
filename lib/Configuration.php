@@ -47,7 +47,7 @@ class Configuration {
   /**
    * Debug switch (default set to false)
    */
-  public static $debug = false;
+  public static $debug = true;
 
   /**
    * Debug file location (log to STDOUT by default)
@@ -57,12 +57,12 @@ class Configuration {
   /**
    * @var string path to save the schemas
    */
-  public static $schema_path = __DIR__ . '/../Resources/schema/';
+  public static $schema_path = __DIR__ . '/Resources/schema/';
 
   /**
    * @var string pattern to get the final path of the schema
    */
-  public static $schema_path_pattern = __DIR__ . '/../Resources/schema/%s.%s.json';
+  public static $schema_path_pattern = __DIR__ . '/Resources/schema/%s.%s.json';
 
   /**
    * @var int days to update the schemas!

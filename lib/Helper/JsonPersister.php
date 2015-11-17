@@ -71,7 +71,6 @@ class JsonPersister
         foreach ($schema as $file) {
             $nFiles++;
             $fileName = $file->getBasename();
-            var_dump($fileName);
             $fileNameSplited = preg_split('/\./', $file->getBasename());
             $timestamp = $fileNameSplited[count($fileNameSplited) - 2];
             $lastTime = new \DateTime();

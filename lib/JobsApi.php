@@ -223,7 +223,6 @@ class JobsApi
             return null;
         }
 
-        $responseObject = $this->apiClient->deserialize($response, 'Job');
         return $response;
     }
 
