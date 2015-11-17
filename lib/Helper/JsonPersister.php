@@ -2,10 +2,12 @@
 
 namespace Qaamgo\Helper;
 
+use Qaamgo\Configuration;
 use Qaamgo\InformationApi;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
 use Qaamgo\Models\Conversion;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class JsonPersister
@@ -24,16 +26,11 @@ class JsonPersister
      * @var Filesystem
      */
     private $filesystem;
-    /**
-     * @var Finder
-     */
-    private $finder;
 
     private $apiInfo;
 
     public function __construct()
     {
-        $this->finder = new Finder();
         $this->filesystem = new Filesystem();
         $this->apiInfo = new InformationApi();
     }
@@ -47,46 +44,65 @@ class JsonPersister
      */
     public function getOptionsSchema($category, $target)
     {
+        //todo log
+        return $this->checkSchema($category, $target);
+    }
+
+    /**
+     * Check if the schema is out date.
+     *
+     * @param $category
+     * @param $target
+     * @return bool
+     */
+    private function checkSchema($category, $target)
+    {
         $name = $category . '.' . $target;
-        $this->checkSchema($name);
         /** @var Conversion $schemaInfo */
         $schemaInfo = json_encode($this->apiInfo->conversionsGet($category, $target));
         $data = json_encode(json_decode(substr($schemaInfo, 1, -1), true)['options']);
         $now = new \DateTime('now');
-        $pathSchema = sprintf(Common::systemSlash(self::SCHEMA_PATH_PATTERN), $name, $now->getTimestamp());
-        $this->filesystem->touch($pathSchema);
-        $this->filesystem->dumpFile($pathSchema, $data);
 
-        return $pathSchema;
-    }
+        $schema = $this->findSchema($name);
+        $newSchemaPath = sprintf(Common::systemSlash(Configuration::$schema_path_pattern), $name, $now->getTimestamp());
 
-    /**
-     * Check if the schema is out date. Refresh every 30 days.
-     *
-     * @param $name
-     * @return bool
-     */
-    private function checkSchema($name)
-    {
-        $schema = $this->finder
-            ->files()
-            ->in(Common::systemSlash(self::SCHEMA_PATH))
-            ->name($name . '*.json')
-            ->notName('.*');
-        $now = new \DateTime('now');
-
+        $nFiles = 0;
         /** @var SplFileInfo $file */
         foreach ($schema as $file) {
+            $nFiles++;
             $fileName = $file->getBasename();
+            var_dump($fileName);
             $fileNameSplited = preg_split('/\./', $file->getBasename());
             $timestamp = $fileNameSplited[count($fileNameSplited) - 2];
             $lastTime = new \DateTime();
             $lastTime->setTimestamp($timestamp);
-            $timeInterval = $lastTime->diff($now)->format('%m');
-            if ($timeInterval > self::TIME_TO_UPDATE) {
-                $this->filesystem->remove(Common::systemSlash(self::SCHEMA_PATH) . $fileName);
+            $timeInterval = $lastTime->diff($now)->format('%d');
+            $toRemove = Common::systemSlash(Configuration::$schema_path) . $fileName;
+            if ($timeInterval > Configuration::$time_to_update) {
+                $this->filesystem->remove($toRemove);
+                $this->filesystem->touch($newSchemaPath);
+                $this->filesystem->dumpFile($newSchemaPath, $data);
+            } else {
+                $newSchemaPath = $toRemove;
             }
         }
-        return true;
+
+        if ($nFiles === 0) {
+            $this->filesystem->touch($newSchemaPath);
+            $this->filesystem->dumpFile($newSchemaPath, $data);
+        }
+
+        return $newSchemaPath;
+    }
+
+    private function findSchema($name)
+    {
+        $finder = new Finder();
+        $schema = $finder
+            ->files()
+            ->in(Common::systemSlash(Configuration::$schema_path))
+            ->name($name . '*.json');
+
+        return $schema;
     }
 }

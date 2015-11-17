@@ -1,8 +1,12 @@
 <?php
 
-namespace Qaamgo;
+namespace Qaamgo\Job;
 
+use Qaamgo\ApiClient;
+use Qaamgo\ApiException;
+use Qaamgo\Configuration;
 use Qaamgo\Helper\JsonPersister;
+use Qaamgo\JobsApi;
 use Qaamgo\Models\Conversion;
 use Qaamgo\Models\InputFile;
 use Qaamgo\Models\Job;
@@ -15,51 +19,27 @@ use Qaamgo\Helper\Common;
  * @package SwaggerClient
  * @author Andrés Cevallos <a.cevallos@qaamgo.com>
  */
-class JobCreator
+class Sync implements Interfaced
 {
-    const INPUT_REMOTE = 'remote';
+    protected $client;
 
-    const INPUT_UPLOAD = 'upload';
+    protected $apiKey;
 
-    const STATUS_COMPLETED = 'completed';
+    protected $inputFiles = [];
 
-    const STATUS_QUEUED = 'queued';
+    protected $schemaPersister;
 
-    const STATUS_DOWNLOADING = 'downloading';
+    protected $optionsValidator;
 
-    const STATUS_PENDING = 'pending';
+    protected $job;
 
-    const STATUS_PROCESSING = 'processing';
+    protected $jobsApi;
 
-    const STATUS_FAILED = 'failed';
+    protected $conversion;
 
-    const STATUS_INVALID = 'invalid';
+    protected $createdJob;
 
-    const STATUS_INCOMPLETE = 'incomplete';
-
-    const STATUS_READY = 'ready';
-
-    private $client;
-
-    private $apiKey;
-
-    private $inputFiles = [];
-
-    private $schemaPersister;
-
-    private $optionsValidator;
-
-    private $job;
-
-    private $jobsApi;
-
-    private $conversion;
-
-    private $createdJob;
-
-    private $synchronous;
-
-    public function __construct($https = false, $host = null, $apiKey, $synchronous = true)
+    public function __construct($https = false, $host = null, $apiKey)
     {
         $this->client = new ApiClient($https, $host);
         $this->apiKey = $apiKey;
@@ -68,7 +48,6 @@ class JobCreator
         $this->job = new Job();
         $this->jobsApi = new JobsApi($this->client);
         $this->conversion = new Conversion();
-        $this->synchronous = $synchronous;
     }
 
     /**
@@ -76,36 +55,24 @@ class JobCreator
      * @param $target
      * @param $input
      * @param array $options
-     * @throws Validator\NoValidOptionsException
+     * @return mixed
+     * @throws ApiException
      */
-    public function createJob($category, $target, $input, $options = [])
+    public function createSyncJob($category, $target, $input, $options = [])
     {
         $inputFile = new InputFile();
         $inputFile->source = $input;
 
-        if (filter_var($input, FILTER_VALIDATE_URL)) {
-            $inputFile->type = self::INPUT_REMOTE;
-            $this->job->input[] = $inputFile;
-        } else {
-            $inputFile->type = self::INPUT_UPLOAD;
-            $this->inputFiles[0] = $inputFile;
-        }
+        $this->filterInput($inputFile, $input);
 
         $this->conversion->category = $category;
         $this->conversion->target = $target;
 
-        if (!empty($options)) {
-            $options = json_encode($options);
-            $schema = $this->schemaPersister->getOptionsSchema($category, $target);
-            $this->optionsValidator->validate($options, $schema);
-            $this->conversion->options = $options;
-        }
+        $this->validateOptions($options, $this->conversion->category, $this->conversion->target);
 
         $this->createJobForApi();
 
-        if ($this->synchronous) {
-            $this->lookStatus($this->createdJob->id);
-        }
+        $this->lookStatus($this->createdJob->id);
 
         return $this->getJobInfo($this->createdJob->id);
     }
@@ -113,10 +80,9 @@ class JobCreator
     /**
      * Create a job and post the file if is needed
      */
-    private function createJobForApi()
+    protected function createJobForApi()
     {
         $this->job->conversion[] = $this->conversion;
-        //Expected all the inputs with the same type
         $this->createdJob = $this->jobsApi->jobsPost($this->apiKey, $this->job);
         if (count($this->inputFiles) > 0) {
             $this->postFile($this->inputFiles[0]);
@@ -127,7 +93,7 @@ class JobCreator
      * @param InputFile $file
      * @return bool
      */
-    private function postFile(InputFile $file)
+    protected function postFile(InputFile $file)
     {
         $this->createdJob->server = Common::httpsToHttpVice($this->createdJob->server);
         $this->createdJob->input[] = $this->jobsApi->jobsPostFile(
@@ -142,27 +108,29 @@ class JobCreator
     /**
      * Call the job for check the status is completed
      *
-     * @return Status|String|Array
+     * @param $jobId
+     * @return Array|Status|String
+     * @throws ApiException
      */
-    public function lookStatus($jobId)
+    protected function lookStatus($jobId)
     {
         /** @var Status $status */
         $status = new Status();
-        while ($status->code != self::STATUS_COMPLETED) {
+        while ($status->code != Configuration::STATUS_COMPLETED) {
             $status = $this->getStatus($jobId);
-            if ($status->code == self::STATUS_FAILED) {
+            if ($status->code == Configuration::STATUS_FAILED) {
                 throw new ApiException(
-                    'Job Status: ' . self::STATUS_FAILED . 'Message: ' . $status->info
+                    'Job Status: ' . Configuration::STATUS_FAILED . 'Message: ' . $status->info
                 );
             }
-            if ($status->code == self::STATUS_INVALID) {
+            if ($status->code == Configuration::STATUS_INVALID) {
                 throw new ApiException(
-                    'Job Status: ' . self::STATUS_INVALID . 'Message: ' . $status->info
+                    'Job Status: ' . Configuration::STATUS_INVALID . 'Message: ' . $status->info
                 );
             }
-            if ($status->code == self::STATUS_INCOMPLETE) {
+            if ($status->code == Configuration::STATUS_INCOMPLETE) {
                 throw new ApiException(
-                    'Job Status: ' . self::STATUS_INCOMPLETE . 'Message: ' . $status->info
+                    'Job Status: ' . Configuration::STATUS_INCOMPLETE . 'Message: ' . $status->info
                 );
             }
         }
@@ -170,13 +138,13 @@ class JobCreator
     }
 
     /**
+     * @param $jobId
      * @return Status
      */
     public function getStatus($jobId)
     {
         return $this->jobsApi->jobsJobIdGet($this->apiKey, $jobId)->status;
     }
-
 
     /**
      * @param $jobId
@@ -185,5 +153,28 @@ class JobCreator
     public function getJobInfo($jobId)
     {
         return $this->jobsApi->jobsJobIdGet($this->apiKey, $jobId);
+    }
+
+    protected function filterInput(InputFile $inputFile, $input)
+    {
+        if (filter_var($input, FILTER_VALIDATE_URL)) {
+            $inputFile->type = Configuration::INPUT_REMOTE;
+            $this->job->input[] = $inputFile;
+        } else {
+            $inputFile->type = Configuration::INPUT_UPLOAD;
+            $this->inputFiles[0] = $inputFile;
+        }
+        return $inputFile;
+    }
+
+    protected function validateOptions($options, $category, $target)
+    {
+        if (empty($options)) {
+            return;
+        }
+
+        $schema = $this->schemaPersister->getOptionsSchema($category, $target);
+        $this->optionsValidator->validate($options, $schema);
+        $this->conversion->options = $options;
     }
 }

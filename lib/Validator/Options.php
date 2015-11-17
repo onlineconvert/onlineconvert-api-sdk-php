@@ -22,11 +22,10 @@ class Options implements Interfaced
     {
         $retriever = new UriRetriever();
         $schema = $retriever->retrieve('file://'.$constraints);
-
         $this->validator->check($data, $schema);
 
         if ($this->validator->isValid()) {
-            return true;
+                return true;
         }
 
         throw new NoValidOptionsException('Options no valid '. print_r($data, $constraints));

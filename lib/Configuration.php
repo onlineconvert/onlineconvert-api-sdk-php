@@ -54,6 +54,44 @@ class Configuration {
    */
   public static $debug_file = 'php://stdout';
 
+  /**
+   * @var string path to save the schemas
+   */
+  public static $schema_path = __DIR__ . '/../Resources/schema/';
+
+  /**
+   * @var string pattern to get the final path of the schema
+   */
+  public static $schema_path_pattern = __DIR__ . '/../Resources/schema/%s.%s.json';
+
+  /**
+   * @var int days to update the schemas!
+   */
+  public static $time_to_update  = 30;
+
+  const INPUT_REMOTE = 'remote';
+
+  const INPUT_UPLOAD = 'upload';
+
+  const STATUS_COMPLETED = 'completed';
+
+  const STATUS_QUEUED = 'queued';
+
+  const STATUS_DOWNLOADING = 'downloading';
+
+  const STATUS_PENDING = 'pending';
+
+  const STATUS_PROCESSING = 'processing';
+
+  const STATUS_FAILED = 'failed';
+
+  const STATUS_INVALID = 'invalid';
+
+  const STATUS_INCOMPLETE = 'incomplete';
+
+  const STATUS_READY = 'ready';
+
+
   /*
    *  manually initalize  ApiClient
    */
