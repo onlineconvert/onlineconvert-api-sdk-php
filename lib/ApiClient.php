@@ -15,7 +15,7 @@
  *  limitations under the License.
  */
 
-namespace SwaggerClient;
+namespace Qaamgo;
 
 class ApiClient
 {
