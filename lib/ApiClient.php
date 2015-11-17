@@ -188,8 +188,6 @@ class ApiClient
     public function callApi($resourcePath, $method, $queryParams, $postData,
                             $headerParams, $authSettings, $server = '')
     {
-        var_dump('server: ' . $server);
-
         $curl = curl_init();
         $headers = array();
 
@@ -489,20 +487,18 @@ class ApiClient
     // Helper function courtesy of https://github.com/guzzle/guzzle/blob/3a0787217e6c0246b457e637ddd33332efea1d2a/src/Guzzle/Http/Message/PostFile.php#L90
     private function getCurlValue($filename, $contentType, $postname)
     {
-        var_dump($filename, $contentType, $postname);
         // PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
         // See: https://wiki.php.net/rfc/curl-file-upload
-        if (function_exists('curl_file_create')) {
-            return curl_file_create($filename, $contentType, $postname);
+        if (!function_exists('curl_file_create')) {
+            throw new ApiException('Function "curl_file_create" not exists.');
         }
 
-        throw new ApiException('Function "curl_file_create" not exists.');
+        return curl_file_create($filename, $contentType, $postname);
 
     }
 
     function uploadFileCallback($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected)
     {
-        var_dump('dfsasfds');
         if ($total_bytes_up_expected > 0) {
             var_dump($total_bytes_down_expected, $bytes_down_so_far, $total_bytes_up_expected);
 //            $nPourcent = round(($total_bytes_up_so_far / $total_bytes_up_expected)*100);

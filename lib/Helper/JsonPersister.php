@@ -5,6 +5,7 @@ namespace Qaamgo\Helper;
 use Qaamgo\InformationApi;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Filesystem\Filesystem;
+use Qaamgo\Models\Conversion;
 
 /**
  * Class JsonPersister
@@ -13,7 +14,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class JsonPersister
 {
-    const SCHEMA_PATH = __DIR__ . '/../Resources/schema/%s.%s.json';
+    const SCHEMA_PATH = __DIR__ . '/../Resources/schema/';
+
+    const SCHEMA_PATH_PATTERN = __DIR__ . '/../Resources/schema/%s.%s.json';
 
     const TIME_TO_UPDATE = 30;
 
@@ -44,13 +47,14 @@ class JsonPersister
      */
     public function getOptionsSchema($category, $target)
     {
-        $name = $category . $target;
+        $name = $category . '.' . $target;
         $this->checkSchema($name);
-        $schemaInfo = $this->apiInfo->conversionsGet($category, $target, 1);
+        /** @var Conversion $schemaInfo */
+        $schemaInfo = json_encode($this->apiInfo->conversionsGet($category, $target));
         $data = substr($schemaInfo, 1, -1);
 
         $now = new \DateTime('now');
-        $pathSchema = sprintf(self::SCHEMA_PATH, $name, $now->getTimestamp());
+        $pathSchema = sprintf(Common::systemSlash(self::SCHEMA_PATH_PATTERN), $name, $now->getTimestamp());
         $this->filesystem->touch($pathSchema);
         $this->filesystem->dumpFile($pathSchema, $data);
 
@@ -65,7 +69,7 @@ class JsonPersister
      */
     private function checkSchema($name)
     {
-        $schema = $this->finder->files()->in(self::SCHEMA_PATH)->name($name . '*.json');
+        $schema = $this->finder->files()->in(Common::systemSlash(self::SCHEMA_PATH))->name($name . '*.json');
         $now = new \DateTime('now');
 
         /** @var SplFileInfo $file */
@@ -77,7 +81,7 @@ class JsonPersister
             $lastTime->setTimestamp($timestamp);
             $timeInterval = $lastTime->diff($now)->format('%m');
             if ($timeInterval > 1) {
-                $this->filesystem->remove(self::SCHEMA_PATH . $fileName);
+                $this->filesystem->remove(Common::systemSlash(self::SCHEMA_PATH) . $fileName);
             }
         }
         return true;

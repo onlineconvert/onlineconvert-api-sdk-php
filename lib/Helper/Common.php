@@ -18,4 +18,9 @@ class Common
 
         return preg_replace("/^https:/i", "http:", $url);
     }
+
+    public static function systemSlash($path)
+    {
+        return preg_replace("/\/|\\//", DIRECTORY_SEPARATOR, $path);
+    }
 }

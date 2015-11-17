@@ -150,17 +150,17 @@ class JobCreator
         while ($status->code != self::STATUS_COMPLETED) {
             $status = $this->getStatus($jobId);
             if ($status->code == self::STATUS_FAILED) {
-                throw new ConversionException(
+                throw new ApiException(
                     'Job Status: ' . self::STATUS_FAILED . 'Message: ' . $status->info
                 );
             }
             if ($status->code == self::STATUS_INVALID) {
-                throw new ConversionException(
+                throw new ApiException(
                     'Job Status: ' . self::STATUS_INVALID . 'Message: ' . $status->info
                 );
             }
             if ($status->code == self::STATUS_INCOMPLETE) {
-                throw new ConversionException(
+                throw new ApiException(
                     'Job Status: ' . self::STATUS_INCOMPLETE . 'Message: ' . $status->info
                 );
             }
