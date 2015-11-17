@@ -95,6 +95,7 @@ class JobCreator
         $this->conversion->target = $target;
 
         if (!empty($options)) {
+            $options = json_encode($options);
             $schema = $this->schemaPersister->getOptionsSchema($category, $target);
             $this->optionsValidator->validate($options, $schema);
             $this->conversion->options = $options;

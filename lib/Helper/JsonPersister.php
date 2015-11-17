@@ -51,8 +51,7 @@ class JsonPersister
         $this->checkSchema($name);
         /** @var Conversion $schemaInfo */
         $schemaInfo = json_encode($this->apiInfo->conversionsGet($category, $target));
-        $data = substr($schemaInfo, 1, -1);
-
+        $data = json_encode(json_decode(substr($schemaInfo, 1, -1), true)['options']);
         $now = new \DateTime('now');
         $pathSchema = sprintf(Common::systemSlash(self::SCHEMA_PATH_PATTERN), $name, $now->getTimestamp());
         $this->filesystem->touch($pathSchema);
@@ -69,18 +68,22 @@ class JsonPersister
      */
     private function checkSchema($name)
     {
-        $schema = $this->finder->files()->in(Common::systemSlash(self::SCHEMA_PATH))->name($name . '*.json');
+        $schema = $this->finder
+            ->files()
+            ->in(Common::systemSlash(self::SCHEMA_PATH))
+            ->name($name . '*.json')
+            ->notName('.*');
         $now = new \DateTime('now');
 
         /** @var SplFileInfo $file */
         foreach ($schema as $file) {
             $fileName = $file->getBasename();
             $fileNameSplited = preg_split('/\./', $file->getBasename());
-            $timestamp = $fileNameSplited[count($fileNameSplited) - 1];
+            $timestamp = $fileNameSplited[count($fileNameSplited) - 2];
             $lastTime = new \DateTime();
             $lastTime->setTimestamp($timestamp);
             $timeInterval = $lastTime->diff($now)->format('%m');
-            if ($timeInterval > 1) {
+            if ($timeInterval > self::TIME_TO_UPDATE) {
                 $this->filesystem->remove(Common::systemSlash(self::SCHEMA_PATH) . $fileName);
             }
         }
