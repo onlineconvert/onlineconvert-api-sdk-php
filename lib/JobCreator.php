@@ -8,6 +8,7 @@ use Qaamgo\Models\InputFile;
 use Qaamgo\Models\Job;
 use Qaamgo\Validator\Options;
 use Qaamgo\Models\Status;
+use Qaamgo\Helper\Common;
 
 /**
  * Class JobCreator
@@ -19,6 +20,24 @@ class JobCreator
     const INPUT_REMOTE = 'remote';
 
     const INPUT_UPLOAD = 'upload';
+
+    const STATUS_COMPLETED = 'completed';
+
+    const STATUS_QUEUED = 'queued';
+
+    const STATUS_DOWNLOADING = 'downloading';
+
+    const STATUS_PENDING = 'pending';
+
+    const STATUS_PROCESSING = 'processing';
+
+    const STATUS_FAILED = 'failed';
+
+    const STATUS_INVALID = 'invalid';
+
+    const STATUS_INCOMPLETE = 'incomplete';
+
+    const STATUS_READY = 'ready';
 
     private $client;
 
@@ -65,10 +84,10 @@ class JobCreator
         $inputFile->source = $input;
 
         if (filter_var($input, FILTER_VALIDATE_URL)) {
-            $inputFile->type = Constants::INPUT_REMOTE;
+            $inputFile->type = self::INPUT_REMOTE;
             $this->job->input[] = $inputFile;
         } else {
-            $inputFile->type = Constants::INPUT_UPLOAD;
+            $inputFile->type = self::INPUT_UPLOAD;
             $this->inputFiles[0] = $inputFile;
         }
 
@@ -128,21 +147,21 @@ class JobCreator
     {
         /** @var Status $status */
         $status = new Status();
-        while ($status->code != Constants::STATUS_COMPLETED) {
+        while ($status->code != self::STATUS_COMPLETED) {
             $status = $this->getStatus($jobId);
-            if ($status->code == Constants::STATUS_FAILED) {
+            if ($status->code == self::STATUS_FAILED) {
                 throw new ConversionException(
-                    'Job Status: ' . Constants::STATUS_FAILED . 'Message: ' . $status->info
+                    'Job Status: ' . self::STATUS_FAILED . 'Message: ' . $status->info
                 );
             }
-            if ($status->code == Constants::STATUS_INVALID) {
+            if ($status->code == self::STATUS_INVALID) {
                 throw new ConversionException(
-                    'Job Status: ' . Constants::STATUS_INVALID . 'Message: ' . $status->info
+                    'Job Status: ' . self::STATUS_INVALID . 'Message: ' . $status->info
                 );
             }
-            if ($status->code == Constants::STATUS_INCOMPLETE) {
+            if ($status->code == self::STATUS_INCOMPLETE) {
                 throw new ConversionException(
-                    'Job Status: ' . Constants::STATUS_INCOMPLETE . 'Message: ' . $status->info
+                    'Job Status: ' . self::STATUS_INCOMPLETE . 'Message: ' . $status->info
                 );
             }
         }

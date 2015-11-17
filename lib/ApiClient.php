@@ -215,7 +215,6 @@ class ApiClient
             $fileContentType = finfo_file($fileInfo, $postData['file_path'], FILEINFO_MIME_TYPE);
             finfo_close($fileInfo);
             $postData = ['file' => $this->getCurlValue($filePath, $fileContentType, $fileName)];
-
         }
 
         //check the server
@@ -239,10 +238,10 @@ class ApiClient
             $x =  '';
             curl_setopt($curl, CURLOPT_PROGRESSFUNCTION, function ($resource, $download_size = 0, $downloaded = 0, $upload_size = 0, $uploaded = 0) use ($x) {
 //                var_dump($resource, $download_size, $downloaded, $upload_size, $uploaded);
-                if($download_size > 0) {
-                    var_dump($upload_size, $upload_size);
-                    var_dump(($download_size / $downloaded) * 100);
-                }
+//                if($download_size > 0) {
+//                    var_dump($upload_size, $upload_size);
+//                    var_dump(($download_size / $downloaded) * 100);
+//                }
             });
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);

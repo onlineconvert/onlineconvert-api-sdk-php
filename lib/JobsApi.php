@@ -214,7 +214,6 @@ class JobsApi
 
         // authentication setting, if any
         $authSettings = array();
-
         // make the API Call
         $response = $this->apiClient->callAPI($resourcePath, $method,
             $queryParams, $httpBody,
