@@ -6,6 +6,7 @@ use Qaamgo\ApiClient;
 use Qaamgo\ApiException;
 use Qaamgo\Configuration;
 use Qaamgo\Helper\JsonPersister;
+use Qaamgo\InformationApi;
 use Qaamgo\JobsApi;
 use Qaamgo\Models\Conversion;
 use Qaamgo\Models\InputFile;
@@ -40,11 +41,11 @@ class Sync implements Interfaced
 
     protected $createdJob;
 
-    public function __construct($https = false, $host = null, $apiKey)
+    public function __construct(ApiClient $apiClient, InformationApi $informationApi, $apiKey)
     {
-        $this->client = new ApiClient($https, $host);
+        $this->client = $apiClient;
         $this->apiKey = $apiKey;
-        $this->schemaPersister = new JsonPersister();
+        $this->schemaPersister = new JsonPersister($informationApi);
         $this->optionsValidator = new Options();
         $this->job = new Job();
         $this->jobsApi = new JobsApi($this->client);

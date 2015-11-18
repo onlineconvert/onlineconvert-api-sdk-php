@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andres
- * Date: 17/11/2015
- * Time: 22:46
- */
 
 namespace Qaamgo\Job;
 
@@ -14,7 +8,6 @@ use Qaamgo\Models\Status;
 
 interface Interfaced
 {
-    public function __construct($https = false, $host = null, $apiKey);
 
     /**
      * Return the status of the job

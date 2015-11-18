@@ -25,23 +25,15 @@ namespace Qaamgo;
 class OutputApi
 {
 
-    function __construct($apiClient = null)
-    {
-        if (null === $apiClient) {
-            if (Configuration::$apiClient === null) {
-                Configuration::$apiClient = new ApiClient(); // create a new API client if not present
-                $this->apiClient = Configuration::$apiClient;
-            } else
-                $this->apiClient = Configuration::$apiClient; // use the default one
-        } else {
-            $this->apiClient = $apiClient; // use the one provided by the user
-        }
-    }
-
     /**
      * @var ApiClient
      */
     private $apiClient; // instance of the ApiClient
+
+    function __construct(ApiClient $apiClient)
+    {
+            $this->apiClient = $apiClient; // use the one provided by the user
+    }
 
     /**
      * get the API client

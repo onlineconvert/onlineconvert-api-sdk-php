@@ -22,115 +22,108 @@
 
 namespace Qaamgo;
 
-class InformationApi {
-
-  function __construct($apiClient = null) {
-    if (null === $apiClient) {
-      if (Configuration::$apiClient === null) {
-        Configuration::$apiClient = new ApiClient(); // create a new API client if not present
-        $this->apiClient = Configuration::$apiClient;
-      }
-      else
-        $this->apiClient = Configuration::$apiClient; // use the default one
-    } else {
-      $this->apiClient = $apiClient; // use the one provided by the user
-    }
-  }
+class InformationApi
+{
 
     /**
      * @var ApiClient
      */
-  private $apiClient; // instance of the ApiClient
+    private $apiClient; // instance of the ApiClient
 
-  /**
-   * get the API client
-   */
-  public function getApiClient() {
-    return $this->apiClient;
-  }
+    function __construct(ApiClient $apiClient)
+    {
+        $this->apiClient = $apiClient; // use the one provided by the user
+    }
 
-  /**
-   * set the API client
-   */
-  public function setApiClient($apiClient) {
-    $this->apiClient = $apiClient;
-  }
+    /**
+     * get the API client
+     */
+    public function getApiClient()
+    {
+        return $this->apiClient;
+    }
 
-
-  /**
-   * conversionsGet
-   *
-   * Get a list of the valid conversions.
-   *
-   * @param string $category Category for the conversion. (required)
-   * @param string $target Target for for the conversion.
-   * @param Number $page Pagination for list of elements.
-   * @return array[Conversion]
-   */
-   public function conversionsGet($category, $target = null, $page = null) {
-
-      // parse inputs
-      $resourcePath = "/conversions";
-      $resourcePath = str_replace("{format}", "json", $resourcePath);
-      $method = "GET";
-      $httpBody = '';
-      $queryParams = array();
-      $headerParams = array();
-      $formParams = array();
-      $_header_accept = $this->apiClient->selectHeaderAccept(array());
-      if (!is_null($_header_accept)) {
-        $headerParams['Accept'] = $_header_accept;
-      }
-      $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
-
-      // query params
-      if($category !== null) {
-        $queryParams['category'] = $this->apiClient->toQueryValue($category);
-      }// query params
-      if($target !== null) {
-        $queryParams['target'] = $this->apiClient->toQueryValue($target);
-      }// query params
-      if($page !== null) {
-        $queryParams['page'] = $this->apiClient->toQueryValue($page);
-      }
+    /**
+     * set the API client
+     */
+    public function setApiClient($apiClient)
+    {
+        $this->apiClient = $apiClient;
+    }
 
 
+    /**
+     * conversionsGet
+     *
+     * Get a list of the valid conversions.
+     *
+     * @param string $category Category for the conversion. (required)
+     * @param string $target Target for for the conversion.
+     * @param Number $page Pagination for list of elements.
+     * @return array[Conversion]
+     */
+    public function conversionsGet($category, $target = null, $page = null)
+    {
+
+        // parse inputs
+        $resourcePath = "/conversions";
+        $resourcePath = str_replace("{format}", "json", $resourcePath);
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+
+        // query params
+        if ($category !== null) {
+            $queryParams['category'] = $this->apiClient->toQueryValue($category);
+        }// query params
+        if ($target !== null) {
+            $queryParams['target'] = $this->apiClient->toQueryValue($target);
+        }// query params
+        if ($page !== null) {
+            $queryParams['page'] = $this->apiClient->toQueryValue($page);
+        }
 
 
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
 
-      // for model (json/xml)
-      if (isset($_tempBody)) {
-        $httpBody = $_tempBody; // $_tempBody is the method argument, if present
-      } else if (count($formParams) > 0) {
-        // for HTTP post (form)
-        $httpBody = $formParams;
-      }
+        // authentication setting, if any
+        $authSettings = array();
 
-      // authentication setting, if any
-      $authSettings = array();
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
 
-      // make the API Call
-      $response = $this->apiClient->callAPI($resourcePath, $method,
-                                            $queryParams, $httpBody,
-                                            $headerParams, $authSettings);
+        if (!$response) {
+            return null;
+        }
 
-      if(! $response) {
-        return null;
-      }
-
-      $responseObject = $this->apiClient->deserialize($response,'array[Conversion]');
-      return $responseObject;
-  }
+        $responseObject = $this->apiClient->deserialize($response, 'array[Conversion]');
+        return $responseObject;
+    }
 
 
     /**
      * getSchema
      *
      * Get API Schema
-
      * @return $response
      */
-    public function getSchema() {
+    public function getSchema()
+    {
 
 
         // parse inputs
@@ -162,59 +155,60 @@ class InformationApi {
             $queryParams, $httpBody,
             $headerParams, $authSettings);
 
-        if(! $response) {
+        if (!$response) {
             return null;
         }
 
         return $response;
     }
 
-  /**
-   * statusesGet
-   *
-   * Get a list of the valid statuses.
-   *
-   * @return array[Status]
-   */
-   public function statusesGet() {
+    /**
+     * statusesGet
+     *
+     * Get a list of the valid statuses.
+     *
+     * @return array[Status]
+     */
+    public function statusesGet()
+    {
 
 
-      // parse inputs
-      $resourcePath = "/statuses";
-      $resourcePath = str_replace("{format}", "json", $resourcePath);
-      $method = "GET";
-      $httpBody = '';
-      $queryParams = array();
-      $headerParams = array();
-      $formParams = array();
-      $_header_accept = $this->apiClient->selectHeaderAccept(array());
-      if (!is_null($_header_accept)) {
-        $headerParams['Accept'] = $_header_accept;
-      }
-      $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
+        // parse inputs
+        $resourcePath = "/statuses";
+        $resourcePath = str_replace("{format}", "json", $resourcePath);
+        $method = "GET";
+        $httpBody = '';
+        $queryParams = array();
+        $headerParams = array();
+        $formParams = array();
+        $_header_accept = $this->apiClient->selectHeaderAccept(array());
+        if (!is_null($_header_accept)) {
+            $headerParams['Accept'] = $_header_accept;
+        }
+        $headerParams['Content-Type'] = $this->apiClient->selectHeaderContentType(array());
 
-      // for model (json/xml)
-      if (isset($_tempBody)) {
-        $httpBody = $_tempBody; // $_tempBody is the method argument, if present
-      } else if (count($formParams) > 0) {
-        // for HTTP post (form)
-        $httpBody = $formParams;
-      }
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            $httpBody = $_tempBody; // $_tempBody is the method argument, if present
+        } else if (count($formParams) > 0) {
+            // for HTTP post (form)
+            $httpBody = $formParams;
+        }
 
-      // authentication setting, if any
-      $authSettings = array();
+        // authentication setting, if any
+        $authSettings = array();
 
-      // make the API Call
-      $response = $this->apiClient->callAPI($resourcePath, $method,
-                                            $queryParams, $httpBody,
-                                            $headerParams, $authSettings);
+        // make the API Call
+        $response = $this->apiClient->callAPI($resourcePath, $method,
+            $queryParams, $httpBody,
+            $headerParams, $authSettings);
 
-      if(! $response) {
-        return null;
-      }
+        if (!$response) {
+            return null;
+        }
 
-      $responseObject = $this->apiClient->deserialize($response,'array[Status]');
-      return $responseObject;
-  }
+        $responseObject = $this->apiClient->deserialize($response, 'array[Status]');
+        return $responseObject;
+    }
 
 }

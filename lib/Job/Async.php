@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andres
- * Date: 17/11/2015
- * Time: 22:49
- */
 
 namespace Qaamgo\Job;
 

@@ -29,10 +29,10 @@ class JsonPersister
 
     private $apiInfo;
 
-    public function __construct()
+    public function __construct(InformationApi $informationApi)
     {
         $this->filesystem = new Filesystem();
-        $this->apiInfo = new InformationApi();
+        $this->apiInfo = $informationApi;
     }
 
     /**

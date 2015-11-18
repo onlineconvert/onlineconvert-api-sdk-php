@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: andres
- * Date: 18/11/2015
- * Time: 0:22
- */
 
 namespace Qaamgo;
-
 
 use Qaamgo\Models\OutputFile;
 
