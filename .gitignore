@@ -1,2 +1,3 @@
-lib/Resources/schema/*.json
-!lib/Resources/schema/.gitkeep
+vendor
+downloads/*
+!downloads/.gitkeep
