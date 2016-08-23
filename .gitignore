@@ -1,0 +1,7 @@
+vendor
+sample/config_me.php
+bin/*
+docs/*
+downloads/*
+!downloads/.gitkeep
+test.php

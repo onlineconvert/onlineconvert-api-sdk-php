@@ -2,27 +2,24 @@
   "name": "qaamgo/onlineconvert-api-sdk",
   "description": "Sdk for using the Online Convert Api version 2",
   "type": "library",
-  "keywords": ["qaamgo", "swagger", "php", "sdk", "api", "REST"],
-  "homepage": "https://github.com/onlineconvert/onlineconvert-api-sdk-php",
+  "keywords": ["qaamgo", "online-convert", "php", "sdk", "api", "REST", "convert", "files"],
   "license": "Apache v2",
-  "authors": [
-    {
-      "name": "QaamGo",
-      "homepage": "https://github.com/onlineconvert/onlineconvert-api-sdk-php/graphs/contributors"
-    }
-  ],
   "require": {
-    "php": ">=5.3.3",
-    "ext-curl": "*",
-    "ext-json": "*",
-    "ext-mbstring": "*"
+    "php": "^5.6|^7.0",
+    "guzzlehttp/guzzle": "^6.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.0",
-    "satooshi/php-coveralls": "~0.6.1",
-    "squizlabs/php_codesniffer": "~2.0"
+    "phpunit/phpunit": "~5.2"
+  },
+  "autoload-dev": {
+    "psr-4": { "Test\\OnlineConvert\\": "tests/" }
   },
   "autoload": {
-    "psr-4": { "SwaggerClient\\" : "lib/" }
+    "psr-4": {
+      "OnlineConvert\\" : "src/"
+    }
+  },
+  "config": {
+    "bin-dir": "bin"
   }
 }
