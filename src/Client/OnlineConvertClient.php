@@ -12,7 +12,7 @@ use OnlineConvert\Exception\RequestException;
  *
  * @package OnlineConvert\Client
  *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
+ * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class OnlineConvertClient implements Interfaced
 {
@@ -224,5 +224,21 @@ class OnlineConvertClient implements Interfaced
         if ($headers !== null) {
             $this->defaultHeader = array_merge($this->defaultHeader, $headers);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * @param string $host
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
     }
 }
