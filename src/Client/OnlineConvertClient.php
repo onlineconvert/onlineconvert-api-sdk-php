@@ -77,8 +77,9 @@ class OnlineConvertClient implements Interfaced
      *
      * @param Configuration $configuration
      * @param               $apiKeyPrefix
+     * @param null|string   $host
      */
-    public function __construct(Configuration $configuration, $apiKeyPrefix)
+    public function __construct(Configuration $configuration, $apiKeyPrefix, $host = null)
     {
         $this->config = $configuration;
 
@@ -87,6 +88,10 @@ class OnlineConvertClient implements Interfaced
             $config['verify'] = false;
         } else {
             $this->host = Resources::HTTP_HOST;
+        }
+
+        if ($host) {
+            $this->host = $host;
         }
 
         $this->apiKey                        = $this->config->getApiKey($apiKeyPrefix);
@@ -224,21 +229,5 @@ class OnlineConvertClient implements Interfaced
         if ($headers !== null) {
             $this->defaultHeader = array_merge($this->defaultHeader, $headers);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getHost()
-    {
-        return $this->host;
-    }
-
-    /**
-     * @param string $host
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
     }
 }
