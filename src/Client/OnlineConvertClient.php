@@ -6,7 +6,6 @@ use OnlineConvert\Configuration;
 use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use OnlineConvert\Exception\RequestException;
-use OnlineConvert\Exception\NoApiKeyDefined;
 
 /**
  * Class OnlineConvertClient

@@ -90,6 +90,10 @@ Advanced usage
 
 >**IMPORTANT** the class **\OnlineConvert\Endpoint\JobsEndpoint** can work to send syncronous and asyncronuos jobs, check **\OnlineConvert\Endpoint\JobsEndpoint::setAsync()**
 
+#### Manage exceptions
+
+>You can catch **\OnlineConvert\Exception\OnlineConvertSdkException::class** to catch any exception in this SDK 
+
 #### Getting url to upload file
 
 - Send a job request
