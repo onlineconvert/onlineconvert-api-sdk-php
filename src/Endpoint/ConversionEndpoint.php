@@ -23,7 +23,7 @@ class ConversionEndpoint extends Abstracted
      * @throws OnlineConvertSdkException when error on the request
      *
      * @param array $conversion
-     * @param array $job if this is not defined will take the last one created
+     * @param array $job
      *
      * @return array
      */
