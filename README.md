@@ -1,7 +1,7 @@
 ﻿Online Convert API version 2 PHP SDK v 2
 ========================================
 
->This SDK provides a code base to interact with the API version 2 for [Online-Convert.com](http://www.online-convert.com/).
+>This SDK provides a code base to interact with the API version 2 of [Online-Convert.com](http://www.online-convert.com/).
 
 Installation
 ------------
@@ -84,20 +84,20 @@ var_dump($syncJob, $asyncJob);
 Advanced usage
 --------------
 
->The class **\OnlineConvert\Api** have some shortcuts methods from the endpoints *(EG: **\OnlineConvert\Api::postFullJob()**)* but you can get from this class the real endpoints and them methods.
+>The class **\OnlineConvert\Api::class** has some shortcut methods that links it to  the endpoints classes *(EG: **\OnlineConvert\Api::postFullJob()**)*, but from the class you can call the real endpoint and their methods.
 
->Also, you can create endpoints class one by one if you like. Check **\OnlineConvert\Endpoint\Abstracted::_construct()**
+>Also, you can create endpoint classes one by one if you like. For this, check **\OnlineConvert\Endpoint\Abstracted::_construct()**
 
->**IMPORTANT** the class **\OnlineConvert\Endpoint\JobsEndpoint** can work to send syncronous and asyncronuos jobs, check **\OnlineConvert\Endpoint\JobsEndpoint::setAsync()**
+>**IMPORTANT:** The class **\OnlineConvert\Endpoint\JobsEndpoint** can be used to send both synchronous and asynchronuos jobs; check **\OnlineConvert\Endpoint\JobsEndpoint::setAsync()**
 
 #### Manage exceptions
 
->You can catch **\OnlineConvert\Exception\OnlineConvertSdkException::class** to catch any exception in this SDK 
+>If you catch **\OnlineConvert\Exception\OnlineConvertSdkException::class**, you automatically catch all exception in this SDK 
 
 #### Getting url to upload file
 
 - Send a job request
-- Get the nexts keys inside the job: **server** and **id**. You can use **\OnlineConvert\Api** or **\OnlineConvert\Endpoint\JobsEndpoint** to get the job information. You will get something like:
+- Take the following keys from a job: **server** and **id**. You can use **\OnlineConvert\Api** or **\OnlineConvert\Endpoint\JobsEndpoint** to get the job information. You will get something like:
 
 ```
 	[
@@ -108,23 +108,23 @@ Advanced usage
 	    ...
 	]
 ```
-- Now with this information you can do:
+- Now with this information you can make this call:
 
 ```php
 \OnlineConvert\Client\OnlineConvertClient->generateUrl(\OnlineConvert\Endpoint\Resources::URL_POST_FILE, ['server' => $server, 'job_id' => $jobId])
 ```
 
-- Also the token can be usefull for some operations thath you want to offer to your users
+- Also these token can be useful for some operations that you might want to share with your users
 
-#### Uploading files directly to Online Convert Servers via AJAX
+#### Uploading files directly to the [Online-Convert.com](http://www.online-convert.com/) servers via AJAX
 
-> **Real live case:** I want to send from my app the users files directly to the API because upload first to my app and then to the API is miss time.
+> **Real life case:** I want to send our user files directly to the API, because sending them to my app first and then to the API costs too much time.
 
->  **Considerations:** Normally this will save us time in process, space in the hard drive, and improve user experience, but here is good have a fallback without JS... just in case.
+>  **Considerations:** Normally, this will save us process time, space on the hard drive and improve user experience, but it's advised to have a fallback alternative that works without using JS.
 
->The folling example is using **JQuery**.
+>The following example is using **JQuery**.
 
->**IMPORTANT** The upload **MUST** be done one by one, so, you need one form per file.
+>**IMPORTANT:** The upload **MUST** be done one by one. Thus, you need one form per file.
 
 #### HTML CODE
 ```html
