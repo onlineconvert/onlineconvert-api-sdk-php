@@ -1,0 +1,4 @@
+vendor
+downloads/*
+!downloads/.gitkeep
+bin/*
