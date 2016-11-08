@@ -43,5 +43,11 @@ class Abstracted
         return json_decode($response, true);
     }
 
-
+    /**
+     * @return Interfaced
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
 }
