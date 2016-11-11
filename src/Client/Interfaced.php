@@ -10,7 +10,7 @@ use OnlineConvert\Exception\RequestException;
  *
  * @package OnlineConvert\Client
  *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
+ * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 interface Interfaced
 {
@@ -33,6 +33,26 @@ interface Interfaced
      * @const string
      */
     const METHOD_DELETE = 'DELETE';
+
+    /**
+     * @const string
+     */
+    const HEADER_OC_SDK_CLIENT_VERSION = 'X-OC-SDK-CLIENT';
+
+    /**
+     * @const string
+     */
+    const HEADER_OC_API_KEY = 'X-OC-API-KEY';
+
+    /**
+     * @const string
+     */
+    const HEADER_OC_JOB_TOKEN = 'X-OC-TOKEN';
+
+    /**
+     * @const string
+     */
+    const CLIENT_USER_AGENT = 'OnlineConvert API2 SDKv2 Client';
 
     /**
      * Send request to the specified url
@@ -87,4 +107,23 @@ interface Interfaced
      * @return Configuration
      */
     public function getConfig();
+
+    /**
+     * Set a predefined header
+     *
+     * @param string         $headerKey
+     * @param string|integer $value
+     *
+     * @return void
+     */
+    public function setHeader($headerKey, $value);
+
+    /**
+     * Get a a header value by key
+     *
+     * @param string $headerKey
+     *
+     * @return string|false False when is the key given has not been configured
+     */
+    public function getHeader($headerKey);
 }

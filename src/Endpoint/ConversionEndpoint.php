@@ -32,7 +32,12 @@ class ConversionEndpoint extends Abstracted
         $url = $this->client->generateUrl(Resources::JOB_ID_CONVERSIONS, ['job_id' => $job['id']]);
 
         return $this->responseToArray(
-            $this->client->sendRequest($url, OnlineConvertClient::METHOD_POST, $conversion)
+            $this->client->sendRequest(
+                $url,
+                OnlineConvertClient::METHOD_POST,
+                $conversion,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
         );
     }
 
@@ -52,7 +57,12 @@ class ConversionEndpoint extends Abstracted
         $url = $this->client->generateUrl(Resources::JOB_ID_CONVERSIONS, ['job_id' => $jobId]);
 
         return $this->responseToArray(
-            $this->client->sendRequest($url, OnlineConvertClient::METHOD_GET)
+            $this->client->sendRequest(
+                $url,
+                OnlineConvertClient::METHOD_GET,
+                null,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
         );
     }
 
@@ -75,7 +85,14 @@ class ConversionEndpoint extends Abstracted
             ['job_id' => $jobId, 'conversion_id' => $conversionId]
         );
 
-        return $this->responseToArray($this->client->sendRequest($url, Interfaced::METHOD_GET));
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_GET,
+                null,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
     }
 
     /**
@@ -97,7 +114,12 @@ class ConversionEndpoint extends Abstracted
             ['job_id' => $jobId, 'conversion_id' => $conversionId]
         );
 
-        $this->client->sendRequest($url, OnlineConvertClient::METHOD_DELETE, []);
+        $this->client->sendRequest(
+            $url,
+            OnlineConvertClient::METHOD_DELETE,
+            [],
+            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+        );
 
         return true;
     }

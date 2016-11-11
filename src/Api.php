@@ -74,6 +74,11 @@ class Api
     private $informationEndpoint;
 
     /**
+     * @var EndpointFactory
+     */
+    private $endpointFactory;
+
+    /**
      * Api constructor.
      *
      * @param Interfaced $client
@@ -208,5 +213,21 @@ class Api
     public function getConversionInfo($target, $category = null)
     {
         return $this->informationEndpoint->getConversionSchema($target, $category);
+    }
+
+    /**
+     * @return Interfaced
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @param Interfaced $client
+     */
+    public function setClient($client)
+    {
+        $this->client = $client;
     }
 }
