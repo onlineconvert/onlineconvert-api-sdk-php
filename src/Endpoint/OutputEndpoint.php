@@ -1,7 +1,7 @@
 <?php
 namespace OnlineConvert\Endpoint;
 
-use OnlineConvert\Client\OnlineConvertClient;
+use OnlineConvert\Client\Interfaced;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use OnlineConvert\Exception\OnlineConvertSdkException;
 use OnlineConvert\Exception\OutputNotFound;
@@ -12,11 +12,10 @@ use OnlineConvert\Exception\RequestException;
  *
  * @package OnlineConvert\Endpoint
  *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
+ * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class OutputEndpoint extends Abstracted
 {
-
     /**
      * Get the list of outputs of a Job
      *
@@ -32,7 +31,14 @@ class OutputEndpoint extends Abstracted
     {
         $url = $this->client->generateUrl(Resources::JOB_ID_OUTPUTS, ['job_id' => $jobId]);
 
-        return $this->responseToArray($this->client->sendRequest($url, OnlineConvertClient::METHOD_GET));
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_GET,
+                null,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
     }
 
     /**
@@ -49,9 +55,14 @@ class OutputEndpoint extends Abstracted
      */
     public function getJobOutput($jobId, $outputId)
     {
-        $url      = $this->client
-            ->generateUrl(Resources::JOB_ID_OUTPUT_ID, ['job_id' => $jobId, 'output_id' => $outputId]);
-        $response = $this->client->sendRequest($url, OnlineConvertClient::METHOD_GET);
+        $url = $this->client->generateUrl(Resources::JOB_ID_OUTPUT_ID, ['job_id' => $jobId, 'output_id' => $outputId]);
+
+        $response = $this->client->sendRequest(
+            $url,
+            Interfaced::METHOD_GET,
+            null,
+            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+        );
 
         return $this->responseToArray($response);
     }
@@ -70,9 +81,14 @@ class OutputEndpoint extends Abstracted
      */
     public function deleteJobOutput($jobId, $outputId)
     {
-        $url = $this->client
-            ->generateUrl(Resources::JOB_ID_OUTPUT_ID, ['job_id' => $jobId, 'output_id' => $outputId]);
-        $this->client->sendRequest($url, OnlineConvertClient::METHOD_DELETE, []);
+        $url = $this->client->generateUrl(Resources::JOB_ID_OUTPUT_ID, ['job_id' => $jobId, 'output_id' => $outputId]);
+
+        $this->client->sendRequest(
+            $url,
+            Interfaced::METHOD_DELETE,
+            [],
+            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+        );
 
         return true;
     }
@@ -83,7 +99,7 @@ class OutputEndpoint extends Abstracted
      * @throws OutputNotFound when the job have not outputs
      * @throws OnlineConvertSdkException when error on the download request
      *
-     * @param array    $job
+     * @param array         $job
      * @param callable|null $progressFunction function to monitoring the progress of the download
      *
      * @return array when error on the request

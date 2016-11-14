@@ -1,7 +1,7 @@
 <?php
 namespace OnlineConvert\Endpoint;
 
-use OnlineConvert\Client\OnlineConvertClient;
+use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Exception\FileNotExists;
 use OnlineConvert\Exception\OnlineConvertSdkException;
 
@@ -10,7 +10,7 @@ use OnlineConvert\Exception\OnlineConvertSdkException;
  *
  * @package OnlineConvert\Endpoint
  *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
+ * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class InputEndpoint extends Abstracted
 {
@@ -32,12 +32,12 @@ class InputEndpoint extends Abstracted
      *
      * @throws OnlineConvertSdkException when error on the request
      *
-     * @param array $input      array with the input information in format:
-     *                          [
+     * @param array $input          array with the input information in format:
+     *                              [
      *                              'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_UPLOAD,
      *                              'source' => '/your/source'
-     *                          ]
-     * @param array $job        if this is not defined will take the last one created
+     *                              ]
+     * @param array $job            if this is not defined will take the last one created
      *
      * @return array
      */
@@ -66,7 +66,12 @@ class InputEndpoint extends Abstracted
         $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
 
         return $this->responseToArray(
-            $this->client->sendRequest($url, OnlineConvertClient::METHOD_GET)
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_GET,
+                null,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
         );
     }
 
@@ -92,7 +97,12 @@ class InputEndpoint extends Abstracted
         $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
 
         return $this->responseToArray(
-            $this->client->sendRequest($url, OnlineConvertClient::METHOD_POST, $input)
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
         );
     }
 
@@ -142,7 +152,14 @@ class InputEndpoint extends Abstracted
         $url = $this->client
             ->generateUrl(Resources::JOB_ID_INPUT_ID, ['job_id' => $jobId, 'input_id' => $inputId]);
 
-        return $this->responseToArray($this->client->sendRequest($url, OnlineConvertClient::METHOD_GET));
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_GET,
+                null,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
     }
 
     /**
@@ -162,7 +179,12 @@ class InputEndpoint extends Abstracted
         $url = $this->client
             ->generateUrl(Resources::JOB_ID_INPUT_ID, ['job_id' => $jobId, 'input_id' => $inputId]);
 
-        $this->client->sendRequest($url, OnlineConvertClient::METHOD_DELETE, []);
+        $this->client->sendRequest(
+            $url,
+            Interfaced::METHOD_DELETE,
+            [],
+            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+        );
 
         return true;
     }

@@ -10,7 +10,7 @@ Installation
 ```json
 {
 	"require": {
-	    "qaamgo/onlineconvert-api-sdk": "^2.0"
+	    "qaamgo/onlineconvert-api-sdk": "^2"
 	}
 }
 ```
@@ -89,6 +89,38 @@ Advanced usage
 >Also, you can create endpoint classes one by one if you like. For this, check **\OnlineConvert\Endpoint\Abstracted::_construct()**
 
 >**IMPORTANT:** The class **\OnlineConvert\Endpoint\JobsEndpoint** can be used to send both synchronous and asynchronuos jobs; check **\OnlineConvert\Endpoint\JobsEndpoint::setAsync()**
+
+>You can also set up different headers into the client, and do some process using the token of a job.
+
+
+```
+    $config = new \OnlineConvert\Configuration();
+    $client = new \OnlineConvert\Client\OnlineConvertClient($config);
+    $syncApi = new \OnlineConvert\Api($client);
+    
+    $ep = $syncApi->getJobsEndpoint();
+    
+    //Option 1
+    $ep->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
+        
+    //Option 2
+    //$client->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
+    //$ep->setClient($client);
+    
+    $job = $ep->postJob([]);
+    
+    $ip = $syncApi->getInputEndpoint();
+    
+    //WORK WITH TOKENS
+    //OPTION 1
+    $input = $ip->setUserToken($a['token'])->postJobInputRemote('http://www.online-convert.com/', $a['id']);
+    
+    //Option 2 (Apply also the previous options to set a header)
+    //$ip->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_JOB_TOKEN, $a['token']);
+    //$b = $ip->postJobInputRemote('http://www.online-convert.com/', $a['id']);
+      
+    var_dump($job, $input);
+```
 
 #### Manage exceptions
 

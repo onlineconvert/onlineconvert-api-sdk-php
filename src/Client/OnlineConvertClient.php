@@ -16,23 +16,14 @@ use OnlineConvert\Exception\RequestException;
  */
 class OnlineConvertClient implements Interfaced
 {
-
-    /**
-     * User agent name
-     *
-     * @var string user agent
-     */
-    protected $userAgent = "OnlineConvert API2 SDKv2 Client";
-
     /**
      * Default header for the client
      *
      * @var array
      */
     protected $defaultHeader = [
-        'X-OC-SDK-CLIENT' => 2,
-        'X-OC-API-KEY'    => null,
-        'X-OC-TOKEN'      => null,
+        'User-Agent'                       => self::CLIENT_USER_AGENT,
+        self::HEADER_OC_SDK_CLIENT_VERSION => 2,
     ];
 
     /**
@@ -79,7 +70,7 @@ class OnlineConvertClient implements Interfaced
      * @param               $apiKeyPrefix
      * @param null|string   $host
      */
-    public function __construct(Configuration $configuration, $apiKeyPrefix, $host = null)
+    public function __construct(Configuration $configuration, $apiKeyPrefix = null, $host = null)
     {
         $this->config = $configuration;
 
@@ -94,8 +85,10 @@ class OnlineConvertClient implements Interfaced
             $this->host = $host;
         }
 
-        $this->apiKey                        = $this->config->getApiKey($apiKeyPrefix);
-        $this->defaultHeader['X-OC-API-KEY'] = $this->apiKey;
+        if ($apiKeyPrefix) {
+            $this->apiKey = $this->config->getApiKey($apiKeyPrefix);
+            $this->setHeader(self::HEADER_OC_API_KEY, $this->apiKey);
+        }
 
         $config['base_uri'] = $this->host;
         $config['headers']  = $this->defaultHeader;
@@ -106,7 +99,7 @@ class OnlineConvertClient implements Interfaced
     /**
      * {@inheritDoc}
      */
-    public function sendRequest($url, $method, array $postData = null, array $headers = null)
+    public function sendRequest($url, $method, array $postData = null, array $headers = [])
     {
         $method = strtoupper($method);
 
@@ -114,7 +107,7 @@ class OnlineConvertClient implements Interfaced
 
         $this->mergeHeaders($headers);
 
-        if ($method == 'POST' || $method == 'PATCH') {
+        if ($method == 'POST' || $method == 'PATCH' || $method == 'DELETE') {
             $postData = json_encode($postData);
 
             try {
@@ -137,6 +130,16 @@ class OnlineConvertClient implements Interfaced
             }
         }
 
+        if (!in_array($request->getStatusCode(), [200, 201, 204, 301, 302])) {
+            throw new RequestException(
+                sprintf(
+                    'Status code: %d, was not valid. Reason: %s',
+                    $request->getStatusCode(),
+                    $request->getBody()->getContents()
+                )
+            );
+        }
+
         return $request->getBody()->getContents();
     }
 
@@ -145,7 +148,9 @@ class OnlineConvertClient implements Interfaced
      */
     public function postLocalFile($source, $url, $token = null)
     {
-        $this->defaultHeader['X-OC-TOKEN'] = $token;
+        if ($token) {
+            $this->defaultHeader[self::HEADER_OC_JOB_TOKEN] = $token;
+        }
 
         try {
             $request = $this->client->request(
@@ -206,6 +211,24 @@ class OnlineConvertClient implements Interfaced
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setHeader($headerKey, $value)
+    {
+        $this->defaultHeader[$headerKey] = $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getHeader($headerKey)
+    {
+        return isset($this->defaultHeader[$headerKey])
+            ? $this->defaultHeader[$headerKey]
+            : false;
+    }
+
+    /**
      * Check if the method is allowed
      *
      * @throws HTTPMethodNotAllowed when the method given is not allowed
@@ -227,6 +250,8 @@ class OnlineConvertClient implements Interfaced
     protected function mergeHeaders(array $headers = null)
     {
         if ($headers !== null) {
+            $this->defaultHeader = array_filter($this->defaultHeader);
+            $headers             = array_filter($headers);
             $this->defaultHeader = array_merge($this->defaultHeader, $headers);
         }
     }

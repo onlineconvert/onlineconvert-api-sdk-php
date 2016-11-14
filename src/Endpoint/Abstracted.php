@@ -6,11 +6,11 @@ use OnlineConvert\Client\Interfaced;
 /**
  * Class to extend endpoints
  *
- * @see http://apiv2.online-convert.com/#endpoints
+ * @see     http://apiv2.online-convert.com/#endpoints
  *
  * @package OnlineConvert\Endpoint
  *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
+ * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class Abstracted
 {
@@ -22,6 +22,13 @@ class Abstracted
     protected $client;
 
     /**
+     * Token from a job
+     *
+     * @var string
+     */
+    protected $userToken = null;
+
+    /**
      * Abstracted constructor.
      *
      * @param Interfaced $client
@@ -29,6 +36,24 @@ class Abstracted
     public function __construct(Interfaced $client)
     {
         $this->client = $client;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserToken()
+    {
+        return $this->userToken;
+    }
+
+    /**
+     * @param string $userToken
+     */
+    public function setUserToken($userToken)
+    {
+        $this->userToken = $userToken;
+
+        return $this;
     }
 
     /**
