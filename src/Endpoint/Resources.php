@@ -110,6 +110,27 @@ class Resources
     const GET_SCHEMA = '/schema';
 
     /**
+     * GET statistics info for a specific day passed in the format yyyy-mm-dd
+     *
+     * @const string
+     */
+    const STATS_DAY = '/stats/day/{day}';
+
+    /**
+     * GET statistics info for a specific month passed in the format yyyy-mm
+     *
+     * @const string
+     */
+    const STATS_MONTH = '/stats/month/{month}';
+
+    /**
+     * GET statistics info for a specific year passed in the format yyyy
+     *
+     * @const string
+     */
+    const STATS_YEAR = '/stats/year/{year}';
+
+    /**
      * POST file
      *
      * @const string
