@@ -25,6 +25,11 @@ class InputEndpoint extends Abstracted
     const INPUT_TYPE_REMOTE = 'remote';
 
     /**
+     * @const string
+     */
+    const INPUT_TYPE_INPUT_ID = 'input_id';
+
+    /**
      * Shortcut to post inputs with different type.
      * The 'type' key inside the input array must be equal at the constants provided in this class.
      *
@@ -47,7 +52,7 @@ class InputEndpoint extends Abstracted
             return $this->postJobInputUpload($input['source'], $job['id'], $job['server'], $job['token']);
         }
 
-        return $this->postJobInputRemote($input['source'], $job['id']);
+        return $this->postJobInputRemote($input['source'], $job['id'], $input['type']);
     }
 
     /**
@@ -84,13 +89,16 @@ class InputEndpoint extends Abstracted
      *
      * @param string $source
      * @param string $jobId
+     * @param string $type
      *
      * @return array
      */
-    public function postJobInputRemote($source, $jobId)
+    public function postJobInputRemote($source, $jobId, $type = self::INPUT_TYPE_REMOTE)
     {
+        $inputType = $type === self::INPUT_TYPE_INPUT_ID ? self::INPUT_TYPE_INPUT_ID : self::INPUT_TYPE_REMOTE;
+
         $input = [
-            'type'   => self::INPUT_TYPE_REMOTE,
+            'type'   => $inputType,
             'source' => $source,
         ];
 

@@ -74,7 +74,8 @@ class JobsEndpoint extends Abstracted
             if ($input['type'] == InputEndpoint::INPUT_TYPE_UPLOAD) {
                 $uploadInput[] = $input;
                 $withUpload    = true;
-            } elseif ($input['type'] == InputEndpoint::INPUT_TYPE_REMOTE) {
+            } elseif ($input['type'] == InputEndpoint::INPUT_TYPE_REMOTE
+                || $input['type'] == InputEndpoint::INPUT_TYPE_INPUT_ID) {
                 $remoteInput[] = $input;
             }
             unset($job['input'][$key]);
