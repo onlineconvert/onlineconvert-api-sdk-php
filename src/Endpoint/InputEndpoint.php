@@ -51,8 +51,11 @@ class InputEndpoint extends Abstracted
         if ($input['type'] === self::INPUT_TYPE_UPLOAD) {
             return $this->postJobInputUpload($input['source'], $job['id'], $job['server'], $job['token']);
         }
+        if ($input['type'] === self::INPUT_TYPE_INPUT_ID) {
+            return $this->postJobInputInputId($input['source'], $job['id']);
+        }
 
-        return $this->postJobInputRemote($input['source'], $job['id'], $input['type']);
+        return $this->postJobInputRemote($input['source'], $job['id']);
     }
 
     /**
@@ -89,16 +92,44 @@ class InputEndpoint extends Abstracted
      *
      * @param string $source
      * @param string $jobId
-     * @param string $type
      *
      * @return array
      */
-    public function postJobInputRemote($source, $jobId, $type = self::INPUT_TYPE_REMOTE)
+    public function postJobInputRemote($source, $jobId)
     {
-        $inputType = $type === self::INPUT_TYPE_INPUT_ID ? self::INPUT_TYPE_INPUT_ID : self::INPUT_TYPE_REMOTE;
-
         $input = [
-            'type'   => $inputType,
+            'type'   => self::INPUT_TYPE_REMOTE,
+            'source' => $source,
+        ];
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
+     * Post input_id from previous conversion as input
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when error on the request
+     *
+     * @param string $source
+     * @param string $jobId
+     *
+     * @return array
+     */
+    public function postJobInputInputId($source, $jobId)
+    {
+        $input = [
+            'type'   => self::INPUT_TYPE_INPUT_ID,
             'source' => $source,
         ];
 
