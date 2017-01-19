@@ -25,6 +25,11 @@ class InputEndpoint extends Abstracted
     const INPUT_TYPE_REMOTE = 'remote';
 
     /**
+     * @const string
+     */
+    const INPUT_TYPE_INPUT_ID = 'input_id';
+
+    /**
      * Shortcut to post inputs with different type.
      * The 'type' key inside the input array must be equal at the constants provided in this class.
      *
@@ -45,6 +50,9 @@ class InputEndpoint extends Abstracted
     {
         if ($input['type'] === self::INPUT_TYPE_UPLOAD) {
             return $this->postJobInputUpload($input['source'], $job['id'], $job['server'], $job['token']);
+        }
+        if ($input['type'] === self::INPUT_TYPE_INPUT_ID) {
+            return $this->postJobInputInputId($input['source'], $job['id']);
         }
 
         return $this->postJobInputRemote($input['source'], $job['id']);
@@ -91,6 +99,37 @@ class InputEndpoint extends Abstracted
     {
         $input = [
             'type'   => self::INPUT_TYPE_REMOTE,
+            'source' => $source,
+        ];
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
+     * Post input_id from previous conversion as input
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when error on the request
+     *
+     * @param string $source
+     * @param string $jobId
+     *
+     * @return array
+     */
+    public function postJobInputInputId($source, $jobId)
+    {
+        $input = [
+            'type'   => self::INPUT_TYPE_INPUT_ID,
             'source' => $source,
         ];
 
