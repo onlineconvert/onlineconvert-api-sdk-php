@@ -92,7 +92,13 @@ class JobsEndpoint extends Abstracted
         );
 
         if ($withUpload) {
-            $job = $this->waitStatus($job['id'], [self::STATUS_READY]);
+            $statusToWait = [self::STATUS_READY];
+
+            if (count($remoteInput) == 0) {
+                $statusToWait[] = self::STATUS_INCOMPLETE;
+            }
+
+            $job = $this->waitStatus($job['id'], $statusToWait);
 
             foreach ($uploadInput as $key => $input) {
                 $this->postFile($input, $job);
