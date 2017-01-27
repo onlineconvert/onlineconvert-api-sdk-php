@@ -286,7 +286,7 @@ class JobsEndpoint extends Abstracted
     }
 
     /**
-     * Get list of all the jobs for a API Key
+     * Get list of all the jobs for an API Key
      *
      * @api
      *
@@ -296,8 +296,40 @@ class JobsEndpoint extends Abstracted
      */
     public function getJobs()
     {
+        return $this->getJobsByStatusWithDefault();
+    }
+
+    /**
+     * Get list of all the jobs with a specific status for an API Key
+     *
+     * @api
+     *
+     * @param string $status
+     *
+     * @return array when error on the request
+     *
+     */
+    public function getJobsByStatus($status)
+    {
+        return $this->getJobsByStatusWithDefault($status);
+    }
+
+    /**
+     * Get list of all the jobs with a specific status for an API Key
+     *
+     * @api
+     *
+     * @param string $status
+     *
+     * @return array when error on the request
+     *
+     */
+    private function getJobsByStatusWithDefault($status = '')
+    {
+        $jobStatusParameter = ((!empty($status)) ? '?status=' . $status : '');
+        
         $response = $this->client->sendRequest(
-            Resources::JOB,
+            Resources::JOB . $jobStatusParameter,
             Interfaced::METHOD_GET,
             null,
             [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
