@@ -66,7 +66,7 @@ interface Interfaced
      *
      * @return string json response
      */
-    public function sendRequest($url, $method, array $postData = null, array $headers = null);
+    public function sendRequest($url, $method, array $postData = null, array $headers = []);
 
     /**
      * Post a file directly to a url using token
