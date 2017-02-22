@@ -102,8 +102,8 @@ You can find information about it in [the official page](https://developers.goog
   * You can leave this field empty if you are selecting any other kind of file
     * EG: pdf, png, zip...
 * filename
-  * This is the file name that the output will have after converting it
-  * If this field is not sent you will get an output with the name `output.<extension>`
+  * This is the file name of the google drive picker file
+  * If this field is not sent the file will be downloaded with the name `output.<extension>`
 
 ```
 $job = [
@@ -114,8 +114,8 @@ $job = [
             'credentials' => [
                 'token' => '<put google drive picker token for the selected file here>'
             ],
-            'content_type' => '<if this is an specific google document>',
-            'filename' => '<name of the output file you wish>'
+            'content_type' => '<if this is a specific google document>',
+            'filename' => '<name of the input file>'
         ]
     ],
     'conversion' => [
