@@ -1,11 +1,11 @@
-﻿Online Convert API version 2 PHP SDK v 2
+Online Convert API version 2 PHP SDK v 2
 ========================================
 
 >This SDK provides a code base to interact with the API version 2 of [Online-Convert.com](http://www.online-convert.com/).
 
 Installation
 ------------
-####Composer
+#### Composer
 
 ```json
 {
@@ -18,7 +18,7 @@ Installation
 Getting started
 ---------------
 
-####Configuration
+#### Configuration
 
 ```php
 require 'vendor/autoload.php';
@@ -30,7 +30,7 @@ $syncApi = new \OnlineConvert\Api($client);
 $asyncApi = new \OnlineConvert\Api($client, true);
 ```
 
-####Sending a full job
+#### Sending a full job
 
 ```php
 $syncJob = [
@@ -81,6 +81,53 @@ $asyncJob = $asyncApi->postFullJob($asyncJob)->getJobCreated();
 var_dump($syncJob, $asyncJob);
 ```
 
+### Sending a job with a gdrive_picker input
+
+#### What is google drive picker
+Google drive picker allows you to access files stored in your google drive account.
+
+You can find information about it in [the official page](https://developers.google.com/picker/)
+
+**Meaning of each field**:
+* type
+ * Specifies that we want to use the google drive picker input
+* source
+ * This must contain the **FILE ID** given back by the google drive picker
+* credentials
+ * This must be an array containing the credentials for the selected file
+ * At the moment you only need to pass the **"token"** field inside it
+   *  The **"token"** field is returned by the google drive picker when a file is selected
+* content_type
+  * This field is mandatory when you select a [Google Document](https://developers.google.com/drive/v3/web/mime-types)
+  * You can leave this field empty if you are selecting any other kind of file
+    * EG: pdf, png, zip...
+* filename
+  * This is the file name that the output will have after converting it
+  * If this field is not sent you will get an output with the name `output.<extension>`
+
+```
+$job = [
+    'input' => [
+        [
+            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
+            'source' => '<put google drive picker file id here>',
+            'credentials' => [
+                'token' => '<put google drive picker token for the selected file here>'
+            ],
+            'content_type' => '<if this is an specific google document>',
+            'filename' => '<name of the output file you wish>'
+        ]
+    ],
+    'conversion' => [
+        [
+            'target' => 'png'
+        ]
+    ]
+];
+```
+
+After this just follow the previous examples on how to effectively send the job to the API.
+
 Advanced usage
 --------------
 
@@ -97,28 +144,28 @@ Advanced usage
     $config = new \OnlineConvert\Configuration();
     $client = new \OnlineConvert\Client\OnlineConvertClient($config);
     $syncApi = new \OnlineConvert\Api($client);
-    
+
     $ep = $syncApi->getJobsEndpoint();
-    
+
     //Option 1
     $ep->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
-        
+
     //Option 2
     //$client->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
     //$ep->setClient($client);
-    
+
     $job = $ep->postJob([]);
-    
+
     $ip = $syncApi->getInputEndpoint();
-    
+
     //WORK WITH TOKENS
     //OPTION 1
     $input = $ip->setUserToken($a['token'])->postJobInputRemote('http://www.online-convert.com/', $a['id']);
-    
+
     //Option 2 (Apply also the previous options to set a header)
     //$ip->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_JOB_TOKEN, $a['token']);
     //$b = $ip->postJobInputRemote('http://www.online-convert.com/', $a['id']);
-      
+
     var_dump($job, $input);
 ```
 
