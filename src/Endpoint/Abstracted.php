@@ -48,6 +48,8 @@ class Abstracted
 
     /**
      * @param string $userToken
+     *
+     * @return $this
      */
     public function setUserToken($userToken)
     {

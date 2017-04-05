@@ -1,10 +1,15 @@
 <?php
+
 namespace OnlineConvert\Endpoint;
 
 use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Exception\CallbackNotDefinedException;
+use OnlineConvert\Exception\InvalidArgumentException;
+use OnlineConvert\Exception\InvalidStatusException;
 use OnlineConvert\Exception\JobFailedException;
+use OnlineConvert\Exception\JobNotFoundException;
 use OnlineConvert\Exception\OnlineConvertSdkException;
+use OnlineConvert\Model\JobStatus;
 
 /**
  * Manage Jobs Endpoint
@@ -19,6 +24,7 @@ class JobsEndpoint extends Abstracted
      * Status when the job finish correctly
      *
      * @const string
+     * @deprecated Will be removed in v3.0
      */
     const STATUS_COMPLETED = 'completed';
 
@@ -26,6 +32,7 @@ class JobsEndpoint extends Abstracted
      * Status when the job fails
      *
      * @const string
+     * @deprecated Will be removed in v3.0
      */
     const STATUS_FAILED = 'failed';
 
@@ -33,6 +40,7 @@ class JobsEndpoint extends Abstracted
      * Status when the job is ready to begin process
      *
      * @const string
+     * @deprecated Will be removed in v3.0
      */
     const STATUS_READY = 'ready';
 
@@ -40,8 +48,19 @@ class JobsEndpoint extends Abstracted
      * Status when the job is incomplete waiting for information to be ready or processed
      *
      * @const string
+     * @deprecated Will be removed in v3.0
      */
     const STATUS_INCOMPLETE = 'incomplete';
+
+    /**
+     * Default time in seconds to wait between job status requests
+     */
+    const DEFAULT_WAITING_TIME_BETWEEN_REQUESTS = 1;
+
+    /**
+     * Maximum time allowed for a status to be reached (14400 = 4 hours)
+     */
+    const MAX_WAITING_TIME = 14400;
 
     /**
      * Determine if this API Handler will be async or sync
@@ -52,11 +71,12 @@ class JobsEndpoint extends Abstracted
 
     /**
      * Post a full job
-     * Notice that this handle the 'process' flag in the job automatically
+     * Notice that this handles the 'process' flag in the job automatically
      *
      * @api
      *
-     * @throws OnlineConvertSdkException when error on the request
+     * @throws OnlineConvertSdkException When there is an error on the request
+     * @throws InvalidArgumentException  If the passed job missed mandatory fields
      *
      * @param array $job
      *
@@ -64,6 +84,17 @@ class JobsEndpoint extends Abstracted
      */
     public function postFullJob(array $job)
     {
+        if (empty($job)) {
+            throw new InvalidArgumentException('The Job is empty');
+        }
+
+        if (empty($job['input'])) {
+            throw new InvalidArgumentException(
+                'It is not possible to use ' . __METHOD__ .
+                ' with no input. Please, use ' . __CLASS__ . '::postIncompleteJob instead.'
+            );
+        }
+
         $this->checkJobCallbackForAsync($job);
 
         $uploadInput = [];
@@ -92,10 +123,10 @@ class JobsEndpoint extends Abstracted
         );
 
         if ($withUpload) {
-            $statusToWait = [self::STATUS_READY];
+            $statusToWait = [JobStatus::STATUS_READY];
 
             if (count($remoteInput) == 0) {
-                $statusToWait[] = self::STATUS_INCOMPLETE;
+                $statusToWait[] = JobStatus::STATUS_INCOMPLETE;
             }
 
             $job = $this->waitStatus($job['id'], $statusToWait);
@@ -104,7 +135,7 @@ class JobsEndpoint extends Abstracted
                 $this->postFile($input, $job);
             }
 
-            $job = $this->waitStatus($job['id'], [self::STATUS_READY]);
+            $job = $this->waitStatus($job['id'], [JobStatus::STATUS_READY]);
 
             $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
 
@@ -115,7 +146,7 @@ class JobsEndpoint extends Abstracted
         }
 
         if (!$this->async) {
-            $this->waitStatus($job['id'], [self::STATUS_COMPLETED]);
+            $this->waitStatus($job['id'], [JobStatus::STATUS_COMPLETED]);
         }
 
         return $this->getJob($job['id']);
@@ -145,30 +176,58 @@ class JobsEndpoint extends Abstracted
     }
 
     /**
-     * Loop to check if the job finish
+     * Loop to check if the job has a specific or a later status
      *
      * @api
      *
-     * @throws OnlineConvertSdkException when error on the requests
+     * @throws OnlineConvertSdkException When an error was catched on the API request
+     * @throws JobFailedException        If the Job failed, regardless of the awaited statuses
+     * @throws JobNotFoundException      If the passed Job is missed or incomplete
+     * @throws InvalidArgumentException  When the method is called with wrong arguments
+     * @throws InvalidStatusException    When the awaited statuses cannot be reached anymore
      *
-     * @param string $jobId
-     * @param array  $waitTo      array with all the possibles status to wait
-     * @param int    $waitingTime time to wait between request in seconds
+     * @param string  $jobId                      The job id
+     * @param array   $waitFor                    Array containing all the possibles statuses to wait for
+     * @param integer $waitingTimeBetweenRequests Time to wait between requests in seconds
+     * @param integer $timeout                    Maximum time to wait for a status to be reached
      *
      * @return array
      */
-    public function waitStatus($jobId, array $waitTo, $waitingTime = 1)
-    {
-        if ($waitingTime < 1) {
-            $waitingTime = 1;
+    public function waitStatus(
+        $jobId,
+        array $waitFor,
+        $waitingTimeBetweenRequests = self::DEFAULT_WAITING_TIME_BETWEEN_REQUESTS,
+        $timeout = self::MAX_WAITING_TIME
+    ) {
+        if (empty($jobId)) {
+            throw new JobNotFoundException();
         }
+
+        if (empty($waitFor)) {
+            throw new InvalidArgumentException('No statuses provided to wait for');
+        }
+
+        $waitingTimeBetweenRequests = (int) $waitingTimeBetweenRequests;
+        $waitingTimeBetweenRequests = ($waitingTimeBetweenRequests >= 1) ?
+            $waitingTimeBetweenRequests :
+            self::DEFAULT_WAITING_TIME_BETWEEN_REQUESTS;
+
+        $timeout = (int) $timeout;
+        $timeout = ($timeout <= self::MAX_WAITING_TIME) ?
+            $timeout :
+            self::MAX_WAITING_TIME;
 
         $response        = null;
         $url             = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $jobId]);
-        $responseAsArray = [];
+
+        $higherAwaitedStatus = new JobStatus(JobStatus::STATUS_INCOMPLETE);
+        foreach ($waitFor as $awaitedStatusCode) {
+            $newStatus = new JobStatus($awaitedStatusCode);
+            $higherAwaitedStatus = $higherAwaitedStatus->canBeUpdated($newStatus) ? $newStatus : $higherAwaitedStatus;
+        }
 
         $i = 0;
-        while ($i < 14400) {
+        do {
             $response = $this->client->sendRequest(
                 $url,
                 Interfaced::METHOD_GET,
@@ -177,28 +236,36 @@ class JobsEndpoint extends Abstracted
             );
 
             $responseAsArray = $this->responseToArray($response);
-            $status          = $responseAsArray['status']['code'];
+            $actualStatus    = new JobStatus($responseAsArray['status']['code']);
 
-            if (in_array($status, $waitTo)) {
+            if (in_array($actualStatus->getCode(), $waitFor, true)) {
                 return $responseAsArray;
-            } elseif ($status == self::STATUS_FAILED) {
+            }
+
+            if (!$actualStatus->canBeUpdated($higherAwaitedStatus)) {
+                throw new InvalidStatusException(
+                    'The awaited status ' . $higherAwaitedStatus->getCode() .
+                    ' can never be reached since the actual status is ' . $actualStatus->getCode());
+            }
+
+            if ($actualStatus->isStatus(JobStatus::STATUS_FAILED)) {
                 throw new JobFailedException(json_encode($response));
             }
 
-            sleep($waitingTime);
-            $i += $waitingTime;
-        }
+            sleep($waitingTimeBetweenRequests);
+            $i += $waitingTimeBetweenRequests;
+        } while ($i <= $timeout);
 
-        return $responseAsArray;
+        throw new OnlineConvertSdkException('Timeout reached while waiting for the Job status');
     }
-
 
     /**
      * Start to process a job
      *
      * @api
      *
-     * @throws OnlineConvertSdkException when error on the request
+     * @throws OnlineConvertSdkException When error on the request
+     * @throws JobNotFoundException      If the passed Job is missed or incomplete
      *
      * @param array $job if this is not defined will take the last one created
      *
@@ -206,9 +273,13 @@ class JobsEndpoint extends Abstracted
      */
     public function processJob(array $job)
     {
+        if (empty($job['id'])) {
+            throw new JobNotFoundException();
+        }
+
         $job['process'] = true;
 
-        $this->waitStatus($job['id'], [self::STATUS_READY, self::STATUS_INCOMPLETE]);
+        $this->waitStatus($job['id'], [JobStatus::STATUS_READY, JobStatus::STATUS_INCOMPLETE]);
 
         $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
         $this->client->sendRequest(
@@ -218,17 +289,11 @@ class JobsEndpoint extends Abstracted
             [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
         );
 
-        $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
-        $this->client->sendRequest(
-            $url,
-            Interfaced::METHOD_GET,
-            null,
-            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
-        );
-
         if (!$this->async) {
-            $this->waitStatus($job['id'], [self::STATUS_COMPLETED]);
+            return $this->waitStatus($job['id'], [JobStatus::STATUS_COMPLETED]);
         }
+
+        $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
 
         return $this->responseToArray(
             $this->client->sendRequest(
