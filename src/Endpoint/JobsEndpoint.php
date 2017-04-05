@@ -159,26 +159,34 @@ class JobsEndpoint extends Abstracted
      */
     public function waitStatus($jobId, array $waitTo, $waitingTime = 1)
     {
+        if ($waitingTime < 1) {
+            $waitingTime = 1;
+        }
+
         $response        = null;
         $url             = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $jobId]);
         $responseAsArray = [];
 
-        $done = false;
-        while (!$done) {
-            sleep($waitingTime);
-            $response        = $this->client->sendRequest(
+        $i = 0;
+        while ($i < 14400) {
+            $response = $this->client->sendRequest(
                 $url,
                 Interfaced::METHOD_GET,
                 null,
                 [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
             );
+
             $responseAsArray = $this->responseToArray($response);
             $status          = $responseAsArray['status']['code'];
+
             if (in_array($status, $waitTo)) {
-                $done = true;
+                return $responseAsArray;
             } elseif ($status == self::STATUS_FAILED) {
                 throw new JobFailedException(json_encode($response));
             }
+
+            sleep($waitingTime);
+            $i += $waitingTime;
         }
 
         return $responseAsArray;
