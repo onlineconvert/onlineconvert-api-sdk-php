@@ -79,8 +79,8 @@ class JobStatusTest extends \PHPUnit_Framework_TestCase
         $status = new JobStatus($statusCode);
 
         $this->assertEquals($statusCode, $status->getCode());
-        $this->assertEquals($isCompleted, $status->isCompleted());
-        $this->assertEquals($isFailed, $status->isFailed());
+        $this->assertEquals($isCompleted, $status->isStatus(JobStatus::STATUS_COMPLETED));
+        $this->assertEquals($isFailed, $status->isStatus(JobStatus::STATUS_FAILED));
 
         if ($canBeUpdatedByCode) {
             $canBeUpdatedBy = new JobStatus($canBeUpdatedByCode);

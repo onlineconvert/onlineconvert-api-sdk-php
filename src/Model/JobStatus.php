@@ -124,26 +124,6 @@ class JobStatus
     }
 
     /**
-     * Checks if the status is completed
-     *
-     * @return boolean
-     */
-    public function isCompleted()
-    {
-        return ($this->code === self::STATUS_COMPLETED);
-    }
-
-    /**
-     * Checks if the status is failed
-     *
-     * @return boolean
-     */
-    public function isFailed()
-    {
-        return ($this->code === self::STATUS_FAILED);
-    }
-
-    /**
      * @return string
      */
     public function getCode()

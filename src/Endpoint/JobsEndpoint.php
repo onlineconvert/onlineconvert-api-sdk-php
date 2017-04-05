@@ -248,7 +248,7 @@ class JobsEndpoint extends Abstracted
                     ' can never be reached since the actual status is ' . $actualStatus->getCode());
             }
 
-            if ($actualStatus->isFailed()) {
+            if ($actualStatus->isStatus(JobStatus::STATUS_FAILED)) {
                 throw new JobFailedException(json_encode($response));
             }
 
