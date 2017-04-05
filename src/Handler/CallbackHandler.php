@@ -1,19 +1,16 @@
 <?php
 namespace OnlineConvert\Handler;
 
-use OnlineConvert\Endpoint\JobsEndpoint;
 use OnlineConvert\Exception\JobFailedException;
+use OnlineConvert\Model\JobStatus;
 
 /**
  * Manage callbacks when the job finish given by the api
  *
  * @package OnlineConvert\Handler
- *
- * @author Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class CallbackHandler
 {
-
     /**
      * Check if the job given have status completed
      *
@@ -25,7 +22,7 @@ class CallbackHandler
      */
     public function jobHasExpectedStatus(array $job)
     {
-        if ($job['status']['code'] != JobsEndpoint::STATUS_COMPLETED) {
+        if ($job['status']['code'] != JobStatus::STATUS_COMPLETED) {
             $jobId = $job['id'];
             throw new JobFailedException("the job '$jobId' has not been completed successfully");
         }
