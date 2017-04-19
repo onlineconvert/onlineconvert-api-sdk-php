@@ -1,7 +1,9 @@
 Online Convert API version 2 PHP SDK v 2
 ========================================
 
->This SDK provides a code base to interact with the API version 2 of [Online-Convert.com](http://www.online-convert.com/).
+This SDK provides a code base to interact with the API version 2 of [Online-Convert.com](http://www.online-convert.com/)
+
+[![Build Status](https://travis-ci.org/onlineconvert/onlineconvert-api-sdk-php.svg?branch=master)](https://travis-ci.org/onlineconvert/onlineconvert-api-sdk-php)
 
 Installation
 ------------
