@@ -130,6 +130,43 @@ $job = [
 
 After this just follow the previous examples on how to effectively send the job to the API.
 
+#### Downloading the Converted Files
+
+You can download the converted files using the following code snippet:
+
+```
+require_once __DIR__ . '/vendor/autoload.php';
+
+$config = new \OnlineConvert\Configuration();
+$config->setApiKey('main', 'PUT YOUR API KEY HERE');
+
+// Remember to specify your own downloads folder.
+$config->downloadFolder = __DIR__ . '/downloads';
+
+$client = new \OnlineConvert\Client\OnlineConvertClient($config, 'main');
+$syncApi = new \OnlineConvert\Api($client);
+$outputEndpoint = $syncApi->getOutputEndpoint();
+
+$syncJob = [
+    'input' => [
+        [
+            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_REMOTE,
+            'source' => 'PUT URL HERE'
+        ]
+    ],
+    'conversion' => [
+        [
+            'target' => 'jpg'
+        ]
+    ]
+];
+
+$job = $syncApi->postFullJob($syncJob)->getJobCreated();
+
+// You will find the file/s in the downloads folder
+$outputEndpoint->downloadOutputs($job);
+```
+
 Advanced usage
 --------------
 
