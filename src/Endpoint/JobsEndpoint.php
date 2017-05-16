@@ -106,7 +106,8 @@ class JobsEndpoint extends Abstracted
                 $uploadInput[] = $input;
                 $withUpload    = true;
             } elseif ($input['type'] == InputEndpoint::INPUT_TYPE_REMOTE
-                || $input['type'] == InputEndpoint::INPUT_TYPE_INPUT_ID) {
+                || $input['type'] == InputEndpoint::INPUT_TYPE_INPUT_ID
+                || $input['type'] == InputEndpoint::INPUT_TYPE_CLOUD) {
                 $remoteInput[] = $input;
             }
             unset($job['input'][$key]);
@@ -400,7 +401,7 @@ class JobsEndpoint extends Abstracted
     private function getJobsByStatusWithDefault($status = '')
     {
         $jobStatusParameter = ((!empty($status)) ? '?status=' . $status : '');
-        
+
         $response = $this->client->sendRequest(
             Resources::JOB . $jobStatusParameter,
             Interfaced::METHOD_GET,

@@ -130,6 +130,38 @@ $job = [
 
 After this just follow the previous examples on how to effectively send the job to the API.
 
+#### Sending a job using Cloud storage providers
+
+The following is an example to send a job where we want to convert a file that we have stored in our Amazon S3 storage.
+
+If you want to know more please check our cloud storage **[API documentation](http://apiv2.online-convert.com/#cloud_storage)**
+
+```
+$job = [
+    'input' => [
+        [
+            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_CLOUD,
+            'source' => 'amazons3',
+            'parameters' => [
+                'bucket' => 'your.bucket.name',
+                'file' => 'the complete path to the file',
+            ],
+            'credentials' => [
+                'accesskeyid' => 'your access key id',
+                'secretaccesskey' => 'your secret access key',
+            ]
+        ]
+    ],
+    'conversion' => [
+        [
+            'target' => 'png'
+        ]
+    ]
+];
+```
+
+After this just follow the previous examples on how to effectively send the job to the API.
+
 #### Downloading the Converted Files
 
 You can download the converted files using the following code snippet:

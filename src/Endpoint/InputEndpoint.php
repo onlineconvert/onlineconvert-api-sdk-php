@@ -36,6 +36,11 @@ class InputEndpoint extends Abstracted
     const INPUT_TYPE_GDRIVE_PICKER = 'gdrive_picker';
 
     /**
+     * @const string
+     */
+    const INPUT_TYPE_CLOUD = 'cloud';
+
+    /**
      * Shortcut to post inputs with different type.
      * The 'type' key inside the input array must be equal to one of the constants provided in this class.
      *
@@ -110,6 +115,17 @@ class InputEndpoint extends Abstracted
                     $input['credentials'],
                     $input['filename'],
                     $input['content_type']
+                );
+                break;
+            case self::INPUT_TYPE_CLOUD:
+                $input['parameters']  = empty($input['parameters']) ? [] : $input['parameters'];
+                $input['credentials'] = empty($input['credentials']) ? [] : $input['credentials'];
+
+                $this->postJobInputCloud(
+                    $job['id'],
+                    $input['source'],
+                    $input['parameters'],
+                    $input['credentials']
                 );
                 break;
             default:
@@ -256,6 +272,41 @@ class InputEndpoint extends Abstracted
             'filename'     => $filename,
             'content_type' => $contentType,
             'credentials'  => $credentials,
+        ];
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
+     * Post cloud input
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when there is error on the request
+     *
+     * @param string $jobId
+     * @param string $source
+     * @param array  $parameters
+     * @param array  $credentials
+     *
+     * @return array
+     */
+    public function postJobInputCloud($jobId, $source, array $parameters, array $credentials)
+    {
+        $input = [
+            'type'        => self::INPUT_TYPE_CLOUD,
+            'source'      => $source,
+            'parameters'  => $parameters,
+            'credentials' => $credentials,
         ];
 
         $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
