@@ -92,13 +92,13 @@ You can find information about it in [the official page](https://developers.goog
 
 **Meaning of each field**:
 * type
- * Specifies that we want to use the google drive picker input
+  * Specifies that we want to use the google drive picker input
 * source
- * This must contain the **FILE ID** given back by the google drive picker
+  * This must contain the **FILE ID** given back by the google drive picker
 * credentials
- * This must be an array containing the credentials for the selected file
- * At the moment you only need to pass the **"token"** field inside it
-   *  The **"token"** field is returned by the google drive picker when a file is selected
+  * This must be an array containing the credentials for the selected file
+  * At the moment you only need to pass the **"token"** field inside it
+    *  The **"token"** field is returned by the google drive picker when a file is selected
 * content_type
   * This field is mandatory when you select a [Google Document](https://developers.google.com/drive/v3/web/mime-types)
   * You can leave this field empty if you are selecting any other kind of file
@@ -118,6 +118,38 @@ $job = [
             ],
             'content_type' => '<if this is a specific google document>',
             'filename' => '<name of the input file>'
+        ]
+    ],
+    'conversion' => [
+        [
+            'target' => 'png'
+        ]
+    ]
+];
+```
+
+After this just follow the previous examples on how to effectively send the job to the API.
+
+#### Sending a job using Cloud storage providers
+
+The following is an example to send a job where we want to convert a file that we have stored in our Amazon S3 storage.
+
+If you want to know more please check our cloud storage **[API documentation](http://apiv2.online-convert.com/#cloud_storage)**
+
+```
+$job = [
+    'input' => [
+        [
+            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_CLOUD,
+            'source' => 'amazons3',
+            'parameters' => [
+                'bucket' => 'your.bucket.name',
+                'file' => 'the complete path to the file',
+            ],
+            'credentials' => [
+                'accesskeyid' => 'your access key id',
+                'secretaccesskey' => 'your secret access key',
+            ]
         ]
     ],
     'conversion' => [
