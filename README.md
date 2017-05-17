@@ -92,13 +92,13 @@ You can find information about it in [the official page](https://developers.goog
 
 **Meaning of each field**:
 * type
- * Specifies that we want to use the google drive picker input
+  * Specifies that we want to use the google drive picker input
 * source
- * This must contain the **FILE ID** given back by the google drive picker
+  * This must contain the **FILE ID** given back by the google drive picker
 * credentials
- * This must be an array containing the credentials for the selected file
- * At the moment you only need to pass the **"token"** field inside it
-   *  The **"token"** field is returned by the google drive picker when a file is selected
+  * This must be an array containing the credentials for the selected file
+  * At the moment you only need to pass the **"token"** field inside it
+    *  The **"token"** field is returned by the google drive picker when a file is selected
 * content_type
   * This field is mandatory when you select a [Google Document](https://developers.google.com/drive/v3/web/mime-types)
   * You can leave this field empty if you are selecting any other kind of file
