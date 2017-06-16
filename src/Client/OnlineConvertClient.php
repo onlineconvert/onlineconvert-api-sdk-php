@@ -3,16 +3,14 @@ namespace OnlineConvert\Client;
 
 use GuzzleHttp\Client;
 use OnlineConvert\Configuration;
-use OnlineConvert\Exception\HTTPMethodNotAllowed;
-use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
-use OnlineConvert\Exception\RequestException;
+use OnlineConvert\Helper\FileSystemHelper;
+use OnlineConvert\Helper\RequestHelper;
+use OnlineConvert\Helper\SpinRequestHelper;
 
 /**
  * Class OnlineConvertClient
  *
  * @package OnlineConvert\Client
- *
- * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class OnlineConvertClient implements Interfaced
 {
@@ -41,18 +39,16 @@ class OnlineConvertClient implements Interfaced
     protected $client;
 
     /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    /**
      * Real user api key
      *
      * @var string
      */
     protected $apiKey;
-
-    /**
-     * Allowed method in Online Convert API
-     *
-     * @var array
-     */
-    private $allowedMethods = [self::METHOD_GET, self::METHOD_POST, self::METHOD_PATCH, self::METHOD_DELETE];
 
     /**
      * Host to send request depends if the https options in the configuration is set to true
@@ -93,7 +89,10 @@ class OnlineConvertClient implements Interfaced
         $config['base_uri'] = $this->host;
         $config['headers']  = $this->defaultHeader;
 
-        $this->client = new Client($config);
+        $this->client        = new Client($config);
+        $spinRequestHelper   = new SpinRequestHelper();
+        $fileSystemHelper    = new FileSystemHelper();
+        $this->requestHelper = new RequestHelper($spinRequestHelper, $fileSystemHelper);
     }
 
     /**
@@ -103,74 +102,21 @@ class OnlineConvertClient implements Interfaced
     {
         $method = strtoupper($method);
 
-        $this->checkMethodToSendRequest($method);
+        $this->requestHelper->checkMethodToSendRequest($method);
 
         $this->mergeHeaders($headers);
 
-        if ($method == 'POST' || $method == 'PATCH' || $method == 'DELETE') {
-            $postData = json_encode($postData);
-
-            try {
-                $request = $this->client->request(
-                    $method,
-                    $url,
-                    [
-                        'body'    => $postData,
-                        'headers' => $this->defaultHeader,
-                    ]
-                );
-            } catch (GuzzleRequestException $e) {
-                throw new RequestException($e->getMessage());
-            }
-        } else {
-            try {
-                $request = $this->client->request($method, $url, ['headers' => $this->defaultHeader]);
-            } catch (GuzzleRequestException $e) {
-                throw new RequestException($e->getMessage());
-            }
-        }
-
-        if (!in_array($request->getStatusCode(), [200, 201, 204, 301, 302])) {
-            throw new RequestException(
-                sprintf(
-                    'Status code: %d, was not valid. Reason: %s',
-                    $request->getStatusCode(),
-                    $request->getBody()->getContents()
-                )
-            );
-        }
-
-        return $request->getBody()->getContents();
+        return $this->requestHelper->sendRequest($url, $method, $this->defaultHeader, $this->client, $postData);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
      */
     public function postLocalFile($source, $url, $token = null)
     {
-        if ($token) {
-            $this->defaultHeader[self::HEADER_OC_JOB_TOKEN] = $token;
-        }
-
-        try {
-            $request = $this->client->request(
-                'POST',
-                $url,
-                [
-                    'multipart' => [
-                        [
-                            'name'     => 'file',
-                            'contents' => fopen($source, 'r'),
-                        ],
-                    ],
-                    'headers'   => $this->defaultHeader,
-                ]
-            );
-        } catch (GuzzleRequestException $e) {
-            throw new RequestException($e->getMessage());
-        }
-
-        return $request->getBody()->getContents();
+        return $this->requestHelper->postLocalFile($source, $url, $this->defaultHeader, $this->client, $token);
     }
 
     /**
@@ -196,6 +142,8 @@ class OnlineConvertClient implements Interfaced
 
     /**
      * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
      */
     public function getClient()
     {
@@ -204,6 +152,8 @@ class OnlineConvertClient implements Interfaced
 
     /**
      * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
      */
     public function getConfig()
     {
@@ -212,6 +162,8 @@ class OnlineConvertClient implements Interfaced
 
     /**
      * {@inheritDoc}
+     *
+     * @codeCoverageIgnore
      */
     public function setHeader($headerKey, $value)
     {
@@ -226,20 +178,6 @@ class OnlineConvertClient implements Interfaced
         return isset($this->defaultHeader[$headerKey])
             ? $this->defaultHeader[$headerKey]
             : false;
-    }
-
-    /**
-     * Check if the method is allowed
-     *
-     * @throws HTTPMethodNotAllowed when the method given is not allowed
-     *
-     * @param string $method
-     */
-    protected function checkMethodToSendRequest($method)
-    {
-        if (!in_array($method, $this->allowedMethods)) {
-            throw new HTTPMethodNotAllowed($method . ' is not allowed');
-        }
     }
 
     /**
