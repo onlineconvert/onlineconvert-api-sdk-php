@@ -83,14 +83,11 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
             ->with($method, $url, $options)
             ->willThrowException($exception);
 
-        try {
-            $this->obj->doSpinRequest($method, $url, $options, $retries, $this->clientMock);
-        } catch (RequestException $e) {
-            $message = $e->getMessage();
-            $code    = $e->getCode();
-        }
-        $this->assertEquals('exceptionMessage', $message);
-        $this->assertEquals($errorCode, $code);
+        $this->expectException(RequestException::class);
+        $this->expectExceptionCode($errorCode);
+        $this->expectExceptionMessage('exceptionMessage');
+
+        $this->obj->doSpinRequest($method, $url, $options, $retries, $this->clientMock);
     }
 
     public function testDoSpinRequestDataProvider()
