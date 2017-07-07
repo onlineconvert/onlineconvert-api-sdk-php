@@ -142,7 +142,7 @@ class JobsEndpoint extends Abstracted
 
             $job['process'] = true;
             $job            = $this->responseToArray(
-                $this->client->sendRequest($url, Interfaced::METHOD_PATCH, $job)
+                $this->client->sendRequest($url, Interfaced::METHOD_PATCH, ['process' => true])
             );
         }
 
