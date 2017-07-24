@@ -49,8 +49,9 @@ class SpinRequestHelper
                 $retries++;
                 sleep($retries);
                 $this->doSpinRequest($method, $url, $options, $retries, $client);
+            } else {
+                throw $e;
             }
-            throw $e;
         }
     }
 }
