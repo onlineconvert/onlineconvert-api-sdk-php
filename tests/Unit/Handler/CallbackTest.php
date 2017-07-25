@@ -1,5 +1,6 @@
 <?php
-namespace Test\OnlineConvert\Handler;
+
+namespace Test\OnlineConvert\Unit\Handler;
 
 use OnlineConvert\Exception\JobFailedException;
 use OnlineConvert\Handler\CallbackHandler;

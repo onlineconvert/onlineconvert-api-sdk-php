@@ -1,5 +1,6 @@
 <?php
-namespace Test\OnlineConvert\Client;
+
+namespace Test\OnlineConvert\Unit\Client;
 
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Configuration;
