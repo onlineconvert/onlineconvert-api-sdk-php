@@ -16,4 +16,8 @@ before_install:
 install:
   - composer install
 
-script: bin/phpunit -c phpunit.xml
+script:
+  - if [[ "$TRAVIS_BRANCH" == "master" && $TRAVIS_PULL_REQUEST == false ]];
+    then bin/phpunit -c phpunit.xml;
+    else bin/phpunit -c phpunit.xml --testsuite unit;
+    fi

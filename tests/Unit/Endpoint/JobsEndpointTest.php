@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\OnlineConvert\Endpoint;
+namespace Test\OnlineConvert\Unit\Endpoint;
 
 use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Client\Resources as ClientResources;

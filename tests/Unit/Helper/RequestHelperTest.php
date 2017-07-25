@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\OnlineConvert\Helper;
+namespace Test\OnlineConvert\Unit\Helper;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
