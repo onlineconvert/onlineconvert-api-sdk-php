@@ -18,6 +18,10 @@ install:
 
 script:
   - if [[ "$TRAVIS_BRANCH" == "master" && $TRAVIS_PULL_REQUEST == false ]];
-    then bin/phpunit -c phpunit.xml;
-    else bin/phpunit -c phpunit.xml --testsuite unit;
+    then
+      echo "All tests running";
+      bin/phpunit -c phpunit.xml;
+    else
+      echo "Only unit tests running";
+      bin/phpunit -c phpunit.xml --testsuite unit;
     fi
