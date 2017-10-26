@@ -4,6 +4,7 @@ namespace OnlineConvert\Endpoint;
 use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Exception\FileNotExists;
 use OnlineConvert\Exception\OnlineConvertSdkException;
+use OnlineConvert\Exception\RequestException;
 
 /**
  * Manage Input Endpoint
@@ -30,32 +31,106 @@ class InputEndpoint extends Abstracted
     const INPUT_TYPE_INPUT_ID = 'input_id';
 
     /**
+     * @const string
+     */
+    const INPUT_TYPE_GDRIVE_PICKER = 'gdrive_picker';
+
+    /**
+     * @const string
+     */
+    const INPUT_TYPE_CLOUD = 'cloud';
+
+    /**
      * Shortcut to post inputs with different type.
-     * The 'type' key inside the input array must be equal at the constants provided in this class.
+     * The 'type' key inside the input array must be equal to one of the constants provided in this class.
      *
      * @api
      *
-     * @throws OnlineConvertSdkException when error on the request
-     *
-     * @param array $input          array with the input information in format:
-     *                              [
-     *                              'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_UPLOAD,
-     *                              'source' => '/your/source'
-     *                              ]
-     * @param array $job            if this is not defined will take the last one created
+     * @param array $input If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID format
+     *                     If the type is self::INPUT_TYPE_GDRIVE_PICKER, the input is in the format
+     *                     [
+     *                         'type'        => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
+     *                         'source'      => 'insert-gdrive-file-id-here',
+     *                         'filename     => 'file_name',
+     *                         'content_type => 'content/type,
+     *                         'credentials  => ['token' => 'authorization_token']
+     *                     ]
+     *                     if the type is self::INPUT_TYPE_UPLOAD or self::INPUT_TYPE_REMOTE
+     *                     [
+     *                         'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_UPLOAD,
+     *                         'source' => '/your/source',
+     *                     ]
+     * @param array $job
      *
      * @return array
+     *
+     * @throws RequestException          If the passed arrays missed mandatory fields
+     * @throws OnlineConvertSdkException when error on the request
      */
     public function postJobInput(array $input, array $job)
     {
-        if ($input['type'] === self::INPUT_TYPE_UPLOAD) {
-            return $this->postJobInputUpload($input['source'], $job['id'], $job['server'], $job['token']);
-        }
-        if ($input['type'] === self::INPUT_TYPE_INPUT_ID) {
-            return $this->postJobInputInputId($input['source'], $job['id']);
+        $errors = [];
+
+        if (empty($job['id'])) {
+            $errors[] = 'Job id is mandatory';
         }
 
-        return $this->postJobInputRemote($input['source'], $job['id']);
+        if (empty($input['type'])) {
+            $errors[] = 'Input type is mandatory';
+        }
+
+        if (empty($input['source'])) {
+            $errors[] = 'Input source is mandatory';
+        }
+
+        $errors = array_merge($errors, $this->checkParameters($input, $job));
+
+        if ($errors) {
+            $exceptionMessage = implode(PHP_EOL, $errors);
+            throw new RequestException($exceptionMessage);
+        }
+
+        switch ($input['type']) {
+            case self::INPUT_TYPE_UPLOAD:
+                return $this->postJobInputUpload(
+                    $input['source'],
+                    $job['id'],
+                    $job['server'],
+                    $job['token']
+                );
+                break;
+            case self::INPUT_TYPE_INPUT_ID:
+                return $this->postJobInputInputId(
+                    $input['source'],
+                    $job['id']
+                );
+                break;
+            case self::INPUT_TYPE_GDRIVE_PICKER:
+                $input['filename']     = empty($input['filename']) ? '' : $input['filename'];
+                $input['content_type'] = empty($input['content_type']) ? '' : $input['content_type'];
+
+                return $this->postJobInputGdrivePicker(
+                    $job['id'],
+                    $input['source'],
+                    $input['credentials'],
+                    $input['filename'],
+                    $input['content_type']
+                );
+                break;
+            case self::INPUT_TYPE_CLOUD:
+                $input['parameters']  = empty($input['parameters']) ? [] : $input['parameters'];
+                $input['credentials'] = empty($input['credentials']) ? [] : $input['credentials'];
+
+                $this->postJobInputCloud(
+                    $job['id'],
+                    $input['source'],
+                    $input['parameters'],
+                    $input['credentials']
+                );
+                break;
+            default:
+                return $this->postJobInputRemote($input['source'], $job['id']);
+        }
     }
 
     /**
@@ -150,7 +225,7 @@ class InputEndpoint extends Abstracted
      *
      * @api
      *
-     * @throws FileNotExists when the source do not exist.
+     * @throws FileNotExists             when the source does not exists
      * @throws OnlineConvertSdkException when error on the request
      *
      * @param string      $source
@@ -172,6 +247,78 @@ class InputEndpoint extends Abstracted
         }
 
         return $this->responseToArray($this->client->postLocalFile($source, $url, $token));
+    }
+
+    /**
+     * Post Google Drive picker input
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when there is error on the request
+     *
+     * @param string $jobId
+     * @param string $source
+     * @param array  $credentials
+     * @param string $filename
+     * @param string $contentType
+     *
+     * @return array
+     */
+    public function postJobInputGdrivePicker($jobId, $source, array $credentials, $filename = '', $contentType = '')
+    {
+        $input = [
+            'type'         => self::INPUT_TYPE_GDRIVE_PICKER,
+            'source'       => $source,
+            'filename'     => $filename,
+            'content_type' => $contentType,
+            'credentials'  => $credentials,
+        ];
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
+     * Post cloud input
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when there is error on the request
+     *
+     * @param string $jobId
+     * @param string $source
+     * @param array  $parameters
+     * @param array  $credentials
+     *
+     * @return array
+     */
+    public function postJobInputCloud($jobId, $source, array $parameters, array $credentials)
+    {
+        $input = [
+            'type'        => self::INPUT_TYPE_CLOUD,
+            'source'      => $source,
+            'parameters'  => $parameters,
+            'credentials' => $credentials,
+        ];
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $input,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
     }
 
     /**
@@ -226,5 +373,37 @@ class InputEndpoint extends Abstracted
         );
 
         return true;
+    }
+
+    /**
+     * Check mandatory parameters. Returns an array with all the missed parameters.
+     *
+     * @param array $input
+     * @param array $job
+     *
+     * @return array
+     */
+    private function checkParameters(array $input, array $job)
+    {
+        $errors = [];
+
+        switch ($input['type']) {
+            case self::INPUT_TYPE_UPLOAD:
+                if (empty($job['server'])) {
+                    $errors[] = 'Job server is mandatory';
+                }
+
+                if (empty($job['token'])) {
+                    $errors[] = 'Job token is mandatory';
+                }
+                break;
+            case self::INPUT_TYPE_GDRIVE_PICKER:
+                if (empty($input['credentials']['token'])) {
+                    $errors[] = 'Credentials with token are mandatory';
+                }
+                break;
+        }
+
+        return $errors;
     }
 }
