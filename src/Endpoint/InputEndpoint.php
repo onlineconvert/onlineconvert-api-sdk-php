@@ -406,4 +406,30 @@ class InputEndpoint extends Abstracted
 
         return $errors;
     }
+    /**
+     * Patch a input
+     *
+     * @api
+     *
+     * @param string $jobId
+     * @param string $inputId
+     * @param array $input
+     *
+     * @throws OnlineConvertSdkException when error on the request
+     *
+     * @return array
+     */
+    public function patchInput($jobId, $inputId, array $input)
+    {
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUT_ID, ['job_id' => $jobId, 'input_id' => $inputId]);
+
+        $response = $this->client->sendRequest(
+            $url,
+            Interfaced::METHOD_PATCH,
+            $input,
+            [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+        );
+
+        return $this->responseToArray($response);
+    }
 }
