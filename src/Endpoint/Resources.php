@@ -136,4 +136,9 @@ class Resources
      * @const string
      */
     const URL_POST_FILE = '{server}/upload-file/{job_id}';
+
+    /**
+     * GET presets
+     */
+    const URL_PRESETS = '/presets';
 }
