@@ -21,7 +21,7 @@ class PresetsEndpoint extends Abstracted
      *
      * @return array
      */
-    public function findPresets(string $filter = '', string $category = '', string $target = '')
+    public function findPresets($filter = '', $category = '', $target = '')
     {
         $queryArray = $this->buildQueryArray($filter, $category, $target);
         $url = $this->client->generateUrl(Resources::URL_PRESETS, [], $queryArray);
@@ -43,7 +43,7 @@ class PresetsEndpoint extends Abstracted
      *
      * @return array
      */
-    private function buildQueryArray(string $filter, string $category, string $target): array
+    private function buildQueryArray($filter, $category, $target)
     {
         $queryArray = [];
 
