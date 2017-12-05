@@ -5,8 +5,6 @@ namespace OnlineConvert\Endpoint;
  * Resources used by the endpoints
  *
  * @package OnlineConvert\Client
- *
- * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class Resources
 {
@@ -15,14 +13,14 @@ class Resources
      *
      * @const string
      */
-    const STATUSES = '/statuses';
+    const STATUSES = 'statuses';
 
     /**
      * GET a list of the valid conversions
      *
      * @const string
      */
-    const CONVERSIONS = '/conversions';
+    const CONVERSIONS = 'conversions';
 
     /**
      * GET list of the jobs for a API KEY
@@ -30,7 +28,7 @@ class Resources
      *
      * @const string
      */
-    const JOB = '/jobs';
+    const JOB = 'jobs';
 
     /**
      * GET job information
@@ -39,21 +37,21 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID = '/jobs/{job_id}';
+    const JOB_ID = 'jobs/{job_id}';
 
     /**
      * GET list of the threads defined for a job
      *
      * @const string
      */
-    const JOB_ID_THREADS = '/jobs/{job_id}/threads';
+    const JOB_ID_THREADS = 'jobs/{job_id}/threads';
 
     /**
      * GET the change history for a job
      *
      * @const string
      */
-    const JOB_ID_HISTORY = '/jobs/{job_id}/history';
+    const JOB_ID_HISTORY = 'jobs/{job_id}/history';
 
     /**
      * GET list of conversions for a job
@@ -61,7 +59,7 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID_CONVERSIONS = '/jobs/{job_id}/conversions';
+    const JOB_ID_CONVERSIONS = 'jobs/{job_id}/conversions';
 
     /**
      * GET the conversion of a job
@@ -69,7 +67,7 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID_CONVERSION_ID = '/jobs/{job_id}/conversions/{conversion_id}';
+    const JOB_ID_CONVERSION_ID = 'jobs/{job_id}/conversions/{conversion_id}';
 
     /**
      * GET list of the inputs of a job
@@ -77,7 +75,7 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID_INPUTS = '/jobs/{job_id}/input';
+    const JOB_ID_INPUTS = 'jobs/{job_id}/input';
 
     /**
      * GET the input information of a job
@@ -85,14 +83,14 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID_INPUT_ID = '/jobs/{job_id}/input/{input_id}';
+    const JOB_ID_INPUT_ID = 'jobs/{job_id}/input/{input_id}';
 
     /**
      * GET the outputs of a job
      *
      * @const string
      */
-    const JOB_ID_OUTPUTS = '/jobs/{job_id}/output';
+    const JOB_ID_OUTPUTS = 'jobs/{job_id}/output';
 
     /**
      * GET a output of a job
@@ -100,35 +98,35 @@ class Resources
      *
      * @const string
      */
-    const JOB_ID_OUTPUT_ID = '/jobs/{job_id}/output/{output_id}';
+    const JOB_ID_OUTPUT_ID = 'jobs/{job_id}/output/{output_id}';
 
     /**
      * GET the api schema
      *
      * @const string
      */
-    const GET_SCHEMA = '/schema';
+    const GET_SCHEMA = 'schema';
 
     /**
      * GET statistics info for a specific day passed in the format yyyy-mm-dd
      *
      * @const string
      */
-    const STATS_DAY = '/stats/day/{day}';
+    const STATS_DAY = 'stats/day/{day}';
 
     /**
      * GET statistics info for a specific month passed in the format yyyy-mm
      *
      * @const string
      */
-    const STATS_MONTH = '/stats/month/{month}';
+    const STATS_MONTH = 'stats/month/{month}';
 
     /**
      * GET statistics info for a specific year passed in the format yyyy
      *
      * @const string
      */
-    const STATS_YEAR = '/stats/year/{year}';
+    const STATS_YEAR = 'stats/year/{year}';
 
     /**
      * POST file
