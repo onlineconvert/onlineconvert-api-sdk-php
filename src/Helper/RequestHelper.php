@@ -78,7 +78,10 @@ class RequestHelper
                     $client
                 );
             } catch (GuzzleRequestException $e) {
-                throw new RequestException($e->getMessage());
+                $requestException = new RequestException($e->getMessage());
+                $requestException->setResponse($e->getResponse());
+
+                throw $requestException;
             }
         } else {
             try {
@@ -90,7 +93,10 @@ class RequestHelper
                     $client
                 );
             } catch (GuzzleRequestException $e) {
-                throw new RequestException($e->getMessage());
+                $requestException = new RequestException($e->getMessage());
+                $requestException->setResponse($e->getResponse());
+
+                throw $requestException;
             }
         }
 
@@ -141,7 +147,10 @@ class RequestHelper
                 $client
             );
         } catch (GuzzleRequestException $e) {
-            throw new RequestException($e->getMessage());
+            $requestException = new RequestException($e->getMessage());
+            $requestException->setResponse($e->getResponse());
+
+            throw $requestException;
         }
 
         return $request->getBody()->getContents();

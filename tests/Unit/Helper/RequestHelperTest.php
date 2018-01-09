@@ -10,6 +10,7 @@ use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Helper\FileSystemHelper;
 use OnlineConvert\Helper\RequestHelper;
 use OnlineConvert\Helper\SpinRequestHelper;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RequestHelperTest
@@ -36,6 +37,16 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
+    private $responseMock;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    private $requestExceptionMock;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     private $fileSystemHelper;
 
     public function setUp()
@@ -49,12 +60,26 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
         $this->fileSystemHelper      = $this->getMockBuilder(FileSystemHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->responseMock          = $this->getMockBuilder(ResponseInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->requestExceptionMock = $this->getMockBuilder(RequestException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->obj                   = new RequestHelper($this->spinRequestHelperMock, $this->fileSystemHelper);
     }
 
     public function tearDown()
     {
-        unset($this->obj, $this->spinRequestHelperMock, $this->clientMock, $this->fileSystemHelper);
+        unset(
+            $this->clientMock,
+            $this->spinRequestHelperMock,
+            $this->fileSystemHelper,
+            $this->responseMock,
+            $this->requestExceptionMock,
+            $this->obj
+        );
     }
 
     /**
@@ -89,14 +114,13 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendRequestException($url, $method, array $defaultHeader, array $postData)
     {
-        $exception = $this->getMockBuilder(RequestException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->setRequestExceptionMock();
+
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
             ->with($method, $url, ['body' => json_encode($postData), 'headers' => $defaultHeader], 0, $this->clientMock)
-            ->willThrowException($exception);
+            ->willThrowException($this->requestExceptionMock);
 
         $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
     }
@@ -159,14 +183,13 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendRequestGetException($url, $method, array $defaultHeader, array $postData)
     {
-        $exception = $this->getMockBuilder(RequestException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->setRequestExceptionMock();
+
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
             ->with($method, $url, ['headers' => $defaultHeader], 0, $this->clientMock)
-            ->willThrowException($exception);
+            ->willThrowException($this->requestExceptionMock);
 
         $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
     }
@@ -265,9 +288,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testPostLocalFileException($source, $url, $defaultHeader, $token)
     {
-        $exception = $this->getMockBuilder(RequestException::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->setRequestExceptionMock();
 
         $this->fileSystemHelper
             ->expects($this->once())
@@ -293,11 +314,10 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
                 0,
                 $this->clientMock
             )
-            ->willThrowException($exception);
+            ->willThrowException($this->requestExceptionMock);
 
         $this->obj->postLocalFile($source, $url, $defaultHeader, $this->clientMock, $token);
     }
-
 
     public function postLocalFileProvider()
     {
@@ -378,5 +398,16 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
                 'method' => ''
             ],
         ];
+    }
+
+    /**
+     * Sets common methods for the RequestException Mock
+     */
+    private function setRequestExceptionMock()
+    {
+        $this->requestExceptionMock
+            ->expects($this->once())
+            ->method('getResponse')
+            ->willReturn($this->responseMock);
     }
 }
