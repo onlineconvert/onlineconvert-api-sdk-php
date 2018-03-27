@@ -15,15 +15,13 @@ use OnlineConvert\Model\JobStatus;
  * Manage Jobs Endpoint
  *
  * @package OnlineConvert\Endpoint
- *
- * @author  Andrés Cevallos <a.cevallos@qaamgo.com>
  */
 class JobsEndpoint extends Abstracted
 {
     /**
      * Status when the job finish correctly
      *
-     * @const string
+     * @var string
      * @deprecated Will be removed in v3.0
      */
     const STATUS_COMPLETED = 'completed';
@@ -31,7 +29,7 @@ class JobsEndpoint extends Abstracted
     /**
      * Status when the job fails
      *
-     * @const string
+     * @var string
      * @deprecated Will be removed in v3.0
      */
     const STATUS_FAILED = 'failed';
@@ -39,7 +37,7 @@ class JobsEndpoint extends Abstracted
     /**
      * Status when the job is ready to begin process
      *
-     * @const string
+     * @var string
      * @deprecated Will be removed in v3.0
      */
     const STATUS_READY = 'ready';
@@ -47,18 +45,22 @@ class JobsEndpoint extends Abstracted
     /**
      * Status when the job is incomplete waiting for information to be ready or processed
      *
-     * @const string
+     * @var string
      * @deprecated Will be removed in v3.0
      */
     const STATUS_INCOMPLETE = 'incomplete';
 
     /**
      * Default time in seconds to wait between job status requests
+     *
+     * @var int
      */
     const DEFAULT_WAITING_TIME_BETWEEN_REQUESTS = 1;
 
     /**
      * Maximum time allowed for a status to be reached (14400 = 4 hours)
+     *
+     * @var int
      */
     const MAX_WAITING_TIME = 14400;
 
@@ -218,12 +220,12 @@ class JobsEndpoint extends Abstracted
             $timeout :
             self::MAX_WAITING_TIME;
 
-        $response        = null;
-        $url             = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $jobId]);
+        $response = null;
+        $url      = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $jobId]);
 
         $higherAwaitedStatus = new JobStatus(JobStatus::STATUS_INCOMPLETE);
         foreach ($waitFor as $awaitedStatusCode) {
-            $newStatus = new JobStatus($awaitedStatusCode);
+            $newStatus           = new JobStatus($awaitedStatusCode);
             $higherAwaitedStatus = $higherAwaitedStatus->canBeUpdated($newStatus) ? $newStatus : $higherAwaitedStatus;
         }
 
@@ -280,7 +282,14 @@ class JobsEndpoint extends Abstracted
 
         $job['process'] = true;
 
-        $this->waitStatus($job['id'], [JobStatus::STATUS_READY, JobStatus::STATUS_INCOMPLETE]);
+        $this->waitStatus(
+            $job['id'],
+            [
+                JobStatus::STATUS_READY,
+                JobStatus::STATUS_INCOMPLETE,
+                JobStatus::STATUS_DOWNLOADING,
+            ]
+        );
 
         $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
         $this->client->sendRequest(
