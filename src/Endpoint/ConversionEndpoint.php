@@ -42,6 +42,38 @@ class ConversionEndpoint extends Abstracted
     }
 
     /**
+     * Post multiple conversions
+     *
+     * @api
+     *
+     * @throws OnlineConvertSdkException when error on the request
+     *
+     * @param array $conversions
+     * @param array $job
+     *
+     * @return array
+     */
+    public function postJobConversions(array $conversions, array $job)
+    {
+        $conversion = [];
+
+        foreach ($conversions as $value) {
+            $conversion[] = $value;
+        }
+        
+        $url = $this->client->generateUrl(Resources::JOB_ID_CONVERSIONS, ['job_id' => $job['id']]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                OnlineConvertClient::METHOD_POST,
+                $conversion,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
      * Get all the conversions from a job
      *
      * @api
