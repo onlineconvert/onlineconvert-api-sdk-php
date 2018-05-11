@@ -46,7 +46,7 @@ class InputEndpoint extends Abstracted
      *
      * @api
      *
-     * @param array $input If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID formatE
+     * @param array $input If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID format
      *                     If the type is self::INPUT_TYPE_GDRIVE_PICKER, the input is in the format
      *                     [
      *                         'type'        => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
