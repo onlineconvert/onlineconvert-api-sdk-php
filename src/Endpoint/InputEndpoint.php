@@ -46,7 +46,7 @@ class InputEndpoint extends Abstracted
      *
      * @api
      *
-     * @param array $input If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID format
+     * @param array $input If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID formatE
      *                     If the type is self::INPUT_TYPE_GDRIVE_PICKER, the input is in the format
      *                     [
      *                         'type'        => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
@@ -431,5 +431,72 @@ class InputEndpoint extends Abstracted
         );
 
         return $this->responseToArray($response);
+    }
+
+    /**
+     * Shortcut to post multiple inputs with different type.
+     * The 'type' key inside the input array must be equal to one of the constants provided in this class.
+     *
+     * @api
+     *
+     * @param array $inputs If the type is self::INPUT_TYPE_INPUT_ID, the source is in UUID format
+     *                     If the type is self::INPUT_TYPE_GDRIVE_PICKER, the input is in the format
+     *                     [
+     *                         'type'        => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
+     *                         'source'      => 'insert-gdrive-file-id-here',
+     *                         'filename     => 'file_name',
+     *                         'content_type => 'content/type,
+     *                         'credentials  => ['token' => 'authorization_token']
+     *                     ],
+     *                     [
+     *                         'type'        => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
+     *                         'source'      => 'insert-gdrive-file-id-here',
+     *                         'filename     => 'file_name',
+     *                         'content_type => 'content/type,
+     *                         'credentials  => ['token' => 'authorization_token']
+     *                     ]
+     *                     if the type is  self::INPUT_TYPE_REMOTE
+     *                     [
+     *                         'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_REMOTE,
+     *                         'source' => '/your/source',
+     *                     ],
+     *                     [
+     *                         'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_REMOTE,
+     *                         'source' => '/your/source',
+     *                     ]
+     * @param array $job
+     *
+     * @return array
+     *
+     * @throws RequestException          If the passed arrays missed mandatory fields
+     * @throws OnlineConvertSdkException when error on the request
+     */
+    public function postJobInputs($inputs, $job)
+    {
+        $errors = [];
+
+        if (empty($job['id'])) {
+            $errors[] = 'Job id is mandatory';
+        }
+
+        if (empty($inputs)) {
+            $errors[] = 'Input source is mandatory';
+        }
+
+        if ($errors) {
+            $exceptionMessage = implode(PHP_EOL, $errors);
+            throw new RequestException($exceptionMessage);
+        }
+
+        $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $job['id']]);
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                Interfaced::METHOD_POST,
+                $inputs,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
     }
 }
