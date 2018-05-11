@@ -60,6 +60,7 @@ class ConversionEndpoint extends Abstracted
         foreach ($conversions as $value) {
             $conversion[] = $value;
         }
+        
         $url = $this->client->generateUrl(Resources::JOB_ID_CONVERSIONS, ['job_id' => $job['id']]);
 
         return $this->responseToArray(
