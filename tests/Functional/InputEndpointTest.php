@@ -109,19 +109,19 @@ class InputEndpointTest extends FunctionalTestCase
         $jobDefinition = [
             'conversion' => [
                 [
-                    "target"   => 'png',
+                    'target' => 'png',
                 ]
             ]
         ];
 
         $inputDefinition = [
             [
-                'type'   => InputEndpoint::INPUT_TYPE_INPUT_ID,
-                'source' => 'c9497281-7518-4905-949d-b191a1b481c7'
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'https://static.online-convert.com/example-file/raster%20image/jpeg/example_small.jpeg'
             ],
             [
-                'type'   => InputEndpoint::INPUT_TYPE_INPUT_ID,
-                'source' => 'cfa75d10-fed2-4d32-9f34-017a95c1b62a'
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'https://static.online-convert.com/example-file/raster%20image/jpeg/example_small.jpeg'
             ]
         ];
         $jobsEndpoint = $this->api->getJobsEndpoint();
