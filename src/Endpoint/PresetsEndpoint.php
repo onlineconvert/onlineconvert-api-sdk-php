@@ -59,4 +59,31 @@ class PresetsEndpoint extends Abstracted
 
         return $queryArray;
     }
+
+    /**
+     * Saves a new Preset
+     *
+     * @param string $name
+     * @param string $target
+     * @param array  $options
+     *
+     * @return array
+     *
+     * @throws OnlineConvertSdkException
+     */
+    public function savePreset($name, $target, array $options)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS, ['presetdata']);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_POST,
+                    ['name' => $name, 'target' => $target, 'options' => $options]
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
 }
