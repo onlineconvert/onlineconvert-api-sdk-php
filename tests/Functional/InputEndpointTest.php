@@ -16,21 +16,24 @@ class InputEndpointTest extends FunctionalTestCase
      */
     public function canPostAnInputToAJob()
     {
-        $jobDefinition   = [
+        $jobDefinition = [
             'conversion' => [
                 [
                     'target' => 'png',
                 ],
             ],
         ];
+
         $inputDefinition = [
             'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
             'source' => 'http://cdn.online-convert.com/images/logo-top.png',
         ];
-        $jobsEndpoint = $this->api->getJobsEndpoint();
 
-        $job = $jobsEndpoint->postIncompleteJob($jobDefinition);
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
         $this->api->getInputEndpoint()->postJobInput($inputDefinition, $job);
+
         $job = $jobsEndpoint->processJob($job);
 
         $inputCount = 1;
@@ -91,10 +94,12 @@ class InputEndpointTest extends FunctionalTestCase
                 'source' => 'http://cdn.online-convert.com/images/correct.png',
             ],
         ];
-        $jobsEndpoint = $this->api->getJobsEndpoint();
 
-        $job = $jobsEndpoint->postIncompleteJob($jobDefinition);
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
         $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
         $job = $jobsEndpoint->processJob($job);
 
         $inputCount = 2;
@@ -124,10 +129,12 @@ class InputEndpointTest extends FunctionalTestCase
                 'source' => 'https://static.online-convert.com/example-file/raster%20image/jpeg/example_small.jpeg',
             ],
         ];
-        $jobsEndpoint = $this->api->getJobsEndpoint();
 
-        $job = $jobsEndpoint->postIncompleteJob($jobDefinition);
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
         $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
         $job      = $jobsEndpoint->processJob($job);
         $inputId1 = $job['input'][0]['id'];
         $inputId2 = $job['input'][1]['id'];
@@ -150,10 +157,12 @@ class InputEndpointTest extends FunctionalTestCase
                 'source' => $inputId2,
             ],
         ];
-        $jobsEndpoint = $this->api->getJobsEndpoint();
 
-        $job = $jobsEndpoint->postIncompleteJob($jobDefinition);
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
         $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
         $job = $jobsEndpoint->processJob($job);
 
         $inputCount = 2;
