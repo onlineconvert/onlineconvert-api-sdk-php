@@ -86,4 +86,51 @@ class PresetsEndpoint extends Abstracted
             throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
+
+    /**
+     * Get a new Preset
+     *
+     * @param string $presetId
+     *
+     * @return array
+     *
+     */
+    public function getPreset(string $presetId)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_GET, [$presetId]);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_GET
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
+
+    /**
+     * Delete a Preset
+     *
+     * @param string $presetId
+     *
+     * @return array
+     *
+     * @throws OnlineConvertSdkException
+     */
+    public function deletePreset($presetId)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_DELETE, [$presetId]);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_POST
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
 }
