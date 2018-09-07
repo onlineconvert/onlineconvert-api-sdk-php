@@ -146,7 +146,7 @@ class Resources
     const URL_PRESETS_GET = '/presets/{preset_id}';
 
     /**
-     * POST preset delete
+     * DELETE presets
      */
-    const URL_PRESETS_DELETE = '/presets/{preset_id}/delete';
+    const URL_PRESETS_DELETE = '/presets/{preset_id}';
 }

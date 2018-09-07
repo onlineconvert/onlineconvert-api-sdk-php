@@ -97,7 +97,7 @@ class PresetsEndpoint extends Abstracted
      */
     public function getPreset(string $presetId)
     {
-        $url = $this->client->generateUrl(Resources::URL_PRESETS_GET, [$presetId]);
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_GET, ['preset_id' => $presetId]);
         try {
             return $this->responseToArray(
                 $this->client->sendRequest(
@@ -115,22 +115,20 @@ class PresetsEndpoint extends Abstracted
      *
      * @param string $presetId
      *
-     * @return array
+     * @return bool
      *
      * @throws OnlineConvertSdkException
      */
     public function deletePreset($presetId)
     {
-        $url = $this->client->generateUrl(Resources::URL_PRESETS_DELETE, [$presetId]);
-        try {
-            return $this->responseToArray(
-                $this->client->sendRequest(
-                    $url,
-                    OnlineConvertClient::METHOD_POST
-                )
-            );
-        } catch (\Exception $e) {
-            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
-        }
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_DELETE, ['preset_id' => $presetId]);
+
+        $this->client->sendRequest(
+            $url,
+            OnlineConvertClient::METHOD_DELETE,
+            []
+        );
+
+        return true;
     }
 }
