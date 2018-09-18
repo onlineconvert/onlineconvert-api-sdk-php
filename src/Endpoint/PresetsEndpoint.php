@@ -88,12 +88,11 @@ class PresetsEndpoint extends Abstracted
     }
 
     /**
-     * Get a new Preset
+     * Get a Preset
      *
      * @param string $presetId
      *
      * @return array
-     *
      */
     public function getPreset(string $presetId)
     {
