@@ -139,4 +139,14 @@ class Resources
      * GET presets
      */
     const URL_PRESETS = '/presets';
+
+    /**
+     * GET single preset
+     */
+    const URL_PRESETS_GET = '/presets/{preset_id}';
+
+    /**
+     * DELETE presets
+     */
+    const URL_PRESETS_DELETE = '/presets/{preset_id}';
 }
