@@ -59,4 +59,75 @@ class PresetsEndpoint extends Abstracted
 
         return $queryArray;
     }
+
+    /**
+     * Saves a new Preset
+     *
+     * @param string $name
+     * @param string $target
+     * @param array  $options
+     *
+     * @return array
+     *
+     * @throws OnlineConvertSdkException
+     */
+    public function savePreset($name, $target, array $options)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS, ['presetdata']);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_POST,
+                    ['name' => $name, 'target' => $target, 'options' => $options]
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
+
+    /**
+     * Get a Preset
+     *
+     * @param string $presetId
+     *
+     * @return array
+     */
+    public function getPreset(string $presetId)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_GET, ['preset_id' => $presetId]);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_GET
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
+
+    /**
+     * Delete a Preset
+     *
+     * @param string $presetId
+     *
+     * @return bool
+     *
+     * @throws OnlineConvertSdkException
+     */
+    public function deletePreset($presetId)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_DELETE, ['preset_id' => $presetId]);
+
+        $this->client->sendRequest(
+            $url,
+            OnlineConvertClient::METHOD_DELETE,
+            []
+        );
+
+        return true;
+    }
 }
