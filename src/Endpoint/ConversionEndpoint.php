@@ -74,6 +74,37 @@ class ConversionEndpoint extends Abstracted
     }
 
     /**
+     * Patch a conversion
+     *
+     * @api
+     *
+     * @param array  $conversion
+     * @param array  $job
+     * @param string $conversionId
+     *
+     * @return array
+     */
+    public function patchJobConversion(array $conversion, array $job, $conversionId)
+    {
+        $url = $this->client->generateUrl(
+            Resources::JOB_ID_CONVERSION_ID,
+            [
+                'job_id'        => $job['id'],
+                'conversion_id' => $conversionId,
+            ]
+        );
+
+        return $this->responseToArray(
+            $this->client->sendRequest(
+                $url,
+                OnlineConvertClient::METHOD_PATCH,
+                $conversion,
+                [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
+            )
+        );
+    }
+
+    /**
      * Get all the conversions from a job
      *
      * @api
