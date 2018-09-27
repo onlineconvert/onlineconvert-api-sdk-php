@@ -19,18 +19,21 @@ class InputEndpointTest extends FunctionalTestCase
         $jobDefinition = [
             'conversion' => [
                 [
-                    'target' => 'png'
-                ]
-            ]
+                    'target' => 'png',
+                ],
+            ],
         ];
-        $inputDefinition = [
-            'type' => InputEndpoint::INPUT_TYPE_REMOTE,
-            'source' => 'http://cdn.online-convert.com/images/logo-top.png'
-        ];
-        $jobsEndpoint = $this->api->getJobsEndpoint();
 
-        $job = $jobsEndpoint->postIncompleteJob($jobDefinition);
+        $inputDefinition = [
+            'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+            'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
         $this->api->getInputEndpoint()->postJobInput($inputDefinition, $job);
+
         $job = $jobsEndpoint->processJob($job);
 
         $inputCount = 1;
@@ -43,21 +46,21 @@ class InputEndpointTest extends FunctionalTestCase
     public function getsAllTheInputsFromAJob()
     {
         $jobDefinition = [
-            'input' => [
+            'input'      => [
                 [
-                    'type' => InputEndpoint::INPUT_TYPE_REMOTE,
-                    'source' => 'http://cdn.online-convert.com/images/logo-top.png'
+                    'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                    'source' => 'http://cdn.online-convert.com/images/logo-top.png',
                 ],
                 [
-                    'type' => InputEndpoint::INPUT_TYPE_REMOTE,
-                    'source' => 'http://cdn.online-convert.com/images/correct.png'
+                    'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                    'source' => 'http://cdn.online-convert.com/images/correct.png',
                 ],
             ],
             'conversion' => [
                 [
-                    'target' => 'png'
-                ]
-            ]
+                    'target' => 'png',
+                ],
+            ],
         ];
 
         $job = $this->api->postFullJob($jobDefinition)->getJobCreated();
@@ -66,5 +69,103 @@ class InputEndpointTest extends FunctionalTestCase
         $inputs     = $this->api->getInputEndpoint()->getJobInputs($job['id']);
 
         $this->assertCount($inputCount, $inputs, "There should be $inputCount inputs");
+    }
+
+    /**
+     * @test
+     */
+    public function canPostMultipleRemoteInputsToAJob()
+    {
+        $jobDefinition = [
+            'conversion' => [
+                [
+                    'target' => 'png',
+                ],
+            ],
+        ];
+
+        $inputDefinition = [
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+            ],
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'http://cdn.online-convert.com/images/correct.png',
+            ],
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
+        $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
+        $job = $jobsEndpoint->processJob($job);
+
+        $inputCount = 2;
+        $this->assertCount($inputCount, $job['input']);
+    }
+
+    /**
+     * @test
+     */
+    public function canPostMultipleInputIdsInputsToAJob()
+    {
+        $jobDefinition = [
+            'conversion' => [
+                [
+                    'target' => 'png',
+                ],
+            ],
+        ];
+
+        $inputDefinition = [
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'https://static.online-convert.com/example-file/raster%20image/jpeg/example_small.jpeg',
+            ],
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+                'source' => 'https://static.online-convert.com/example-file/raster%20image/jpeg/example_small.jpeg',
+            ],
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
+        $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
+        $job      = $jobsEndpoint->processJob($job);
+        $inputId1 = $job['input'][0]['id'];
+        $inputId2 = $job['input'][1]['id'];
+
+        $jobDefinition = [
+            'conversion' => [
+                [
+                    'target' => 'png',
+                ],
+            ],
+        ];
+
+        $inputDefinition = [
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_INPUT_ID,
+                'source' => $inputId1,
+            ],
+            [
+                'type'   => InputEndpoint::INPUT_TYPE_INPUT_ID,
+                'source' => $inputId2,
+            ],
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
+        $this->api->getInputEndpoint()->postJobInputs($inputDefinition, $job);
+
+        $job = $jobsEndpoint->processJob($job);
+
+        $inputCount = 2;
+        $this->assertCount($inputCount, $job['input']);
     }
 }
