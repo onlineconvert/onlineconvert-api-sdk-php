@@ -79,7 +79,12 @@ class RequestHelper
                 );
             } catch (GuzzleRequestException $e) {
                 $requestException = new RequestException($e->getMessage());
-                $requestException->setResponse($e->getResponse());
+
+                $response = $e->getResponse();
+
+                if ($response instanceof ResponseInterface) {
+                    $requestException->setResponse($response);
+                }
 
                 throw $requestException;
             }
@@ -94,7 +99,12 @@ class RequestHelper
                 );
             } catch (GuzzleRequestException $e) {
                 $requestException = new RequestException($e->getMessage());
-                $requestException->setResponse($e->getResponse());
+
+                $response = $e->getResponse();
+
+                if ($response instanceof ResponseInterface) {
+                    $requestException->setResponse($response);
+                }
 
                 throw $requestException;
             }
@@ -148,7 +158,12 @@ class RequestHelper
             );
         } catch (GuzzleRequestException $e) {
             $requestException = new RequestException($e->getMessage());
-            $requestException->setResponse($e->getResponse());
+
+            $response = $e->getResponse();
+
+            if ($response instanceof ResponseInterface) {
+                $requestException->setResponse($response);
+            }
 
             throw $requestException;
         }
