@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RequestHelper
