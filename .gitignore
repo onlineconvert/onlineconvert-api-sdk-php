@@ -6,3 +6,5 @@ bin/*
 test.php
 tests/Functional/downloads/*
 !tests/Functional/downloads/.gitkeep
+tests/SimpleJob/downloads/*
+!tests/SimpleJob/downloads/.gitkeep
