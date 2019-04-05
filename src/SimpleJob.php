@@ -157,7 +157,6 @@ class SimpleJob
      *
      * @throws UnexpectedValueException when target is empty
      */
-
     public function addConversion($format, $options)
     {
         if (empty($format)) {
