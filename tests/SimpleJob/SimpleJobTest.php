@@ -21,10 +21,13 @@ class SimpleJobTest extends SimpleJobTestCase
         $job = $SimpleJob
             ->download('http://cdn.online-convert.com/images/logo-top.png')
             ->upload(self::FILES_PATH . 'oc_logo.png')
-            ->addConversion('jpg', [
-                'width'  => 1200,
-                'height' => 1000,
-            ])
+            ->addConversion(
+                'jpg',
+                [
+                    'width'  => 1200,
+                    'height' => 1000,
+                ]
+            )
             ->start()
             ->wait()
             ->saveTo(self::DOWNLOADS_PATH);
@@ -40,13 +43,18 @@ class SimpleJobTest extends SimpleJobTestCase
 
         $dirs = [self::DOWNLOADS_PATH . $job['output'][0]['id']];
 
-        $finder = (new Finder())->files()
-                                ->in($dirs)
-                                ->ignoreDotFiles(true);
+        $finder = new Finder();
 
-        $finderIterator = $finder->getIterator();
+        $finderIterator = $finder
+            ->files()
+            ->in($dirs)
+            ->ignoreDotFiles(true)
+            ->getIterator();
 
-        $this->assertCount($expectedFileCount, $finderIterator,
-                           'There must be one file in the output download folder');
+        $this->assertCount(
+            $expectedFileCount,
+            $finderIterator,
+            'There must be one file in the output download folder'
+        );
     }
 }

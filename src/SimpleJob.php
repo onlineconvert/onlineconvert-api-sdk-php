@@ -73,7 +73,6 @@ class SimpleJob
     {
         $this->config = new Configuration();
         $this->config->setApiKey('main', $apiKey);
-        $this->config->setDownloadFolder('./tests/Functional/downloads/');
     }
 
     /**
@@ -198,7 +197,7 @@ class SimpleJob
      */
     public function saveTo($path)
     {
-        $this->config->downloadFolder = $path;
+        $this->config->setDownloadFolder($path);
         $this->outputEndpoint->downloadOutputs($this->job);
 
         return $this->job;
