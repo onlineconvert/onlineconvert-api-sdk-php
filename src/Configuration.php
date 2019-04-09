@@ -64,7 +64,6 @@ class Configuration
         return $this->apiKey;
     }
 
-
     /**
      * Set an api key
      *
@@ -74,5 +73,15 @@ class Configuration
     public function setApiKey($prefix, $apiKey)
     {
         $this->apiKey[$prefix] = $apiKey;
+    }
+
+    /**
+     * Set the download folder
+     *
+     * @param string $downloadFolder
+     */
+    public function setDownloadFolder($downloadFolder)
+    {
+        $this->downloadFolder = $downloadFolder;
     }
 }
