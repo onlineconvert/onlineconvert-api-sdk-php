@@ -88,6 +88,30 @@ class PresetsEndpoint extends Abstracted
     }
 
     /**
+     * Update a preset
+     *
+     * @param string $presetId
+     * @param string $name
+     *
+     * @return array
+     */
+    public function updatePreset(string $presetId, string $name)
+    {
+        $url = $this->client->generateUrl(Resources::URL_PRESETS_PATCH, ['preset_id' => $presetId]);
+        try {
+            return $this->responseToArray(
+                $this->client->sendRequest(
+                    $url,
+                    OnlineConvertClient::METHOD_PATCH,
+                    ['name' => $name]
+                )
+            );
+        } catch (\Exception $e) {
+            throw new OnlineConvertSdkException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
+
+    /**
      * Get a Preset
      *
      * @param string $presetId
