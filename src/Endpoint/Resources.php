@@ -146,6 +146,11 @@ class Resources
     const URL_PRESETS_GET = '/presets/{preset_id}';
 
     /**
+     * Update a single preset
+     */
+    const URL_PRESETS_PATCH = '/presets/{preset_id}';
+
+    /**
      * DELETE presets
      */
     const URL_PRESETS_DELETE = '/presets/{preset_id}';
