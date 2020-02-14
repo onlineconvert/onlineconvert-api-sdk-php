@@ -140,9 +140,9 @@ interface Interfaced
     /**
      * Get a rest-client request option by key
      *
-     * @param $oktionKey
+     * @param $optionKey
      *
      * @return mixed|null Null when the given key has not been configured
      */
-    public function getOption($oktionKey);
+    public function getOption($optionKey);
 }
