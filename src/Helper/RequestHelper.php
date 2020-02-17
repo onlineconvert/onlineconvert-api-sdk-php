@@ -59,22 +59,33 @@ class RequestHelper
      * @param array      $defaultHeader
      * @param Client     $client
      * @param array|null $postData
+     * @param array      $customOptions
      *
      * @return string
      */
-    public function sendRequest($url, $method, array $defaultHeader, Client $client, array $postData = null)
-    {
+    public function sendRequest(
+        $url,
+        $method,
+        array $defaultHeader,
+        Client $client,
+        array $postData = null,
+        array $customOptions = []
+    ) {
+        $options = [
+            'headers' => $defaultHeader,
+        ];
+
+        $options = array_merge($customOptions, $options);
+
         if ($method == 'POST' || $method == 'PATCH' || $method == 'DELETE') {
-            $postData = json_encode($postData);
+            $postData        = json_encode($postData);
+            $options['body'] = $postData;
 
             try {
                 $request = $this->spinRequestHelper->doSpinRequest(
                     $method,
                     $url,
-                    [
-                        'body'    => $postData,
-                        'headers' => $defaultHeader,
-                    ],
+                    $options,
                     0,
                     $client
                 );
@@ -94,7 +105,7 @@ class RequestHelper
                 $request = $this->spinRequestHelper->doSpinRequest(
                     $method,
                     $url,
-                    ['headers' => $defaultHeader],
+                    $options,
                     0,
                     $client
                 );
@@ -132,28 +143,39 @@ class RequestHelper
      * @param array       $defaultHeader
      * @param Client      $client
      * @param string|null $token
+     * @param array       $customOptions
      *
      * @return string
      */
-    public function postLocalFile($source, $url, $defaultHeader, Client $client, $token = null)
-    {
+    public function postLocalFile(
+        $source,
+        $url,
+        $defaultHeader,
+        Client $client,
+        $token = null,
+        array $customOptions = []
+    ) {
         if ($token) {
             $defaultHeader[OnlineConvertClient::HEADER_OC_JOB_TOKEN] = $token;
         }
+
+        $options = [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => $this->fileSystemHelper->fopen($source, 'r'),
+                ],
+            ],
+            'headers'   => $defaultHeader,
+        ];
+
+        $options = array_merge($customOptions, $options);
 
         try {
             $request = $this->spinRequestHelper->doSpinRequest(
                 'POST',
                 $url,
-                [
-                    'multipart' => [
-                        [
-                            'name'     => 'file',
-                            'contents' => $this->fileSystemHelper->fopen($source, 'r'),
-                        ],
-                    ],
-                    'headers'   => $defaultHeader,
-                ],
+                $options,
                 0,
                 $client
             );

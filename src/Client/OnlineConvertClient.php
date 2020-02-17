@@ -69,6 +69,7 @@ class OnlineConvertClient implements Interfaced
     public function __construct(Configuration $configuration, $apiKeyPrefix = null, $host = null)
     {
         $this->config = $configuration;
+        $config       = $configuration->getOptions();
 
         if ($this->config->https) {
             $this->host       = Resources::HTTPS_HOST;
@@ -106,7 +107,14 @@ class OnlineConvertClient implements Interfaced
 
         $this->mergeHeaders($headers);
 
-        return $this->requestHelper->sendRequest($url, $method, $this->defaultHeader, $this->client, $postData);
+        return $this->requestHelper->sendRequest(
+            $url,
+            $method,
+            $this->defaultHeader,
+            $this->client,
+            $postData,
+            $this->config->getOptions()
+        );
     }
 
     /**
@@ -116,7 +124,14 @@ class OnlineConvertClient implements Interfaced
      */
     public function postLocalFile($source, $url, $token = null)
     {
-        return $this->requestHelper->postLocalFile($source, $url, $this->defaultHeader, $this->client, $token);
+        return $this->requestHelper->postLocalFile(
+            $source,
+            $url,
+            $this->defaultHeader,
+            $this->client,
+            $token,
+            $this->config->getOptions()
+        );
     }
 
     /**

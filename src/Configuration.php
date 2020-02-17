@@ -21,6 +21,13 @@ class Configuration
     private $apiKey = [];
 
     /**
+     * Custom rest-client options
+     *
+     * @var array
+     */
+    private $options = [];
+
+    /**
      * Connect to the api via https
      *
      * @var bool
@@ -83,5 +90,42 @@ class Configuration
     public function setDownloadFolder($downloadFolder)
     {
         $this->downloadFolder = $downloadFolder;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    /**
+     * @param $optionKey
+     *
+     * @return mixed|null Null if option is not set
+     */
+    public function getOption($optionKey)
+    {
+        return isset($this->options[$optionKey])
+            ? $this->options[$optionKey]
+            : null;
+    }
+
+    /**
+     * @param $optionKey
+     * @param $value
+     */
+    public function setOption($optionKey, $value)
+    {
+        $this->options[$optionKey] = $value;
     }
 }
