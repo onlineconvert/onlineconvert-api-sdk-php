@@ -103,8 +103,29 @@ class Configuration
     /**
      * @param array $options
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->options = $options;
+    }
+
+    /**
+     * @param $optionKey
+     *
+     * @return mixed|null Null if option is not set
+     */
+    public function getOption($optionKey)
+    {
+        return isset($this->options[$optionKey])
+            ? $this->options[$optionKey]
+            : null;
+    }
+
+    /**
+     * @param $optionKey
+     * @param $value
+     */
+    public function setOption($optionKey, $value)
+    {
+        $this->options[$optionKey] = $value;
     }
 }

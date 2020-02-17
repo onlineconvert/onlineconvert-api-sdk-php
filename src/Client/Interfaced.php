@@ -126,23 +126,4 @@ interface Interfaced
      * @return string|false False when is the key given has not been configured
      */
     public function getHeader($headerKey);
-
-    /**
-     * Set a rest-client request option
-     *
-     * @param string $optionKey
-     * @param mixed  $value
-     *
-     * @return void
-     */
-    public function setOption($optionKey, $value);
-
-    /**
-     * Get a rest-client request option by key
-     *
-     * @param $optionKey
-     *
-     * @return mixed|null Null when the given key has not been configured
-     */
-    public function getOption($optionKey);
 }

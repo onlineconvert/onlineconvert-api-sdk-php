@@ -208,25 +208,4 @@ class OnlineConvertClient implements Interfaced
             $this->defaultHeader = array_merge($this->defaultHeader, $headers);
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOption($optionKey, $value)
-    {
-        $options             = $this->config->getOptions();
-        $options[$optionKey] = $value;
-
-        $this->config->setOptions($options);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOption($optionKey)
-    {
-        return isset($this->config->getOptions()[$optionKey])
-            ? $this->config->getOptions()[$optionKey]
-            : null;
-    }
 }
