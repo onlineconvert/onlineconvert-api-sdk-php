@@ -210,12 +210,16 @@ class InputEndpoint extends Abstracted
      *
      * @param string $source
      * @param string $jobId
-     * @param        $engine
+     * @param string $engine
      *
      * @return array
      */
-    public function postJobInputRemote($source, $jobId, $engine)
+    public function postJobInputRemote($source, $jobId, $engine = self::ENGINE_AUTO)
     {
+        if (!in_array($engine, self::ENGINES, true)) {
+            throw new InvalidEngineException('Engine ' . $engine . ' does not exist');
+        }
+
         $input = [
             'type'   => self::INPUT_TYPE_REMOTE,
             'source' => $source,
