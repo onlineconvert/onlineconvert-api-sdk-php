@@ -3,12 +3,13 @@
 namespace Test\OnlineConvert\Unit\Endpoint;
 
 use OnlineConvert\Model\JobStatus;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class JobStatusTest
  * @package Test\OnlineConvert\Endpoint
  */
-class JobStatusTest extends \PHPUnit_Framework_TestCase
+class JobStatusTest extends TestCase
 {
     /**
      * Data provider for testStatus

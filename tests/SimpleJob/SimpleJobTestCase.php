@@ -2,10 +2,12 @@
 
 namespace Test\OnlineConvert\SimpleJob;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Bootstrapping of classes needed for functional testing.
  */
-class SimpleJobTestCase extends \PHPUnit_Framework_TestCase
+class SimpleJobTestCase extends TestCase
 {
     /**
      * @var string
@@ -17,12 +19,12 @@ class SimpleJobTestCase extends \PHPUnit_Framework_TestCase
      */
     const FILES_PATH = __DIR__ . '/../Functional/files/';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

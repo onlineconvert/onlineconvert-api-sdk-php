@@ -18,14 +18,14 @@ class JobsEndpointTest extends Abstracted
      */
     private $jobsEndpoint;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->jobsEndpoint = new JobsEndpoint($this->clientMock);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -194,7 +194,10 @@ class JobsEndpointTest extends Abstracted
             ->method('sendRequest')
             ->willReturn('{"id":"' . $this->aJobId . '","status":{"code":"completed"}}');
 
-        $this->jobsEndpoint->postFullJob($job);
+        $createdJob = $this->jobsEndpoint->postFullJob($job);
+
+        $this->assertArrayHasKey('id', $createdJob);
+        $this->assertArrayHasKey('status', $createdJob);
     }
 
     public function testPostIncompleteSyncJobWillChangeProcessToFalse()
