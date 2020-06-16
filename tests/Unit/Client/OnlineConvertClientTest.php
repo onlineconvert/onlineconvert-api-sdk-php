@@ -5,6 +5,7 @@ namespace Test\OnlineConvert\Unit\Client;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Configuration;
 use OnlineConvert\Endpoint\Resources;
+use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -12,7 +13,7 @@ use OnlineConvert\Endpoint\Resources;
  *
  * @package Test\OnlineConvert\Client
  */
-class OnlineConvertClientTest extends \PHPUnit_Framework_TestCase
+class OnlineConvertClientTest extends TestCase
 {
     /**
      * @var OnlineConvertClient
@@ -24,13 +25,13 @@ class OnlineConvertClientTest extends \PHPUnit_Framework_TestCase
      */
     private $config;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->config = new Configuration();
         $this->config->setApiKey('main', 'some_key');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->mockClient,

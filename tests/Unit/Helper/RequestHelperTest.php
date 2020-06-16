@@ -10,12 +10,13 @@ use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Helper\FileSystemHelper;
 use OnlineConvert\Helper\RequestHelper;
 use OnlineConvert\Helper\SpinRequestHelper;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RequestHelperTest
  */
-class RequestHelperTest extends \PHPUnit_Framework_TestCase
+class RequestHelperTest extends TestCase
 {
     /**
      * The Object to be tested
@@ -49,7 +50,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     private $fileSystemHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->clientMock            = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
@@ -70,7 +71,7 @@ class RequestHelperTest extends \PHPUnit_Framework_TestCase
         $this->obj                   = new RequestHelper($this->spinRequestHelperMock, $this->fileSystemHelper);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->clientMock,

@@ -5,6 +5,7 @@ namespace Test\OnlineConvert\Functional;
 use OnlineConvert\Api;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Configuration;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -12,7 +13,7 @@ use Symfony\Component\Finder\SplFileInfo;
 /**
  * Bootstrapping of classes needed for functional testing.
  */
-class FunctionalTestCase extends \PHPUnit_Framework_TestCase
+class FunctionalTestCase extends TestCase
 {
     /**
      * @const string
@@ -39,7 +40,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $api;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -50,7 +51,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         $this->api    = new Api($this->client);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset(
@@ -60,7 +61,7 @@ class FunctionalTestCase extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 

@@ -7,13 +7,14 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use OnlineConvert\Helper\SpinRequestHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SpinRequestHelperTest
  *
  * @package Test\OnlineConvert\Helper
  */
-class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
+class SpinRequestHelperTest extends TestCase
 {
     /**
      * The Object to be tested
@@ -27,7 +28,7 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
      */
     private $clientMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->clientMock = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
@@ -36,13 +37,13 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
         $this->obj = new SpinRequestHelper();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->obj);
     }
 
     /**
-     * @dataProvider testDoSpinRequestDataProvider
+     * @dataProvider doSpinRequestDataProvider
      *
      * @param string $method
      * @param string $url
@@ -62,7 +63,7 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testDoSpinRequestExceptionDataProvider
+     * @dataProvider doSpinRequestExceptionDataProvider
      *
      * @param string $method
      * @param string $url
@@ -90,7 +91,7 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
         $this->obj->doSpinRequest($method, $url, $options, $retries, $this->clientMock);
     }
 
-    public function testDoSpinRequestDataProvider()
+    public function doSpinRequestDataProvider()
     {
         return [
             [
@@ -114,7 +115,7 @@ class SpinRequestHelperTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testDoSpinRequestExceptionDataProvider()
+    public function doSpinRequestExceptionDataProvider()
     {
         return [
             [

@@ -3,8 +3,9 @@
 namespace Test\OnlineConvert\Unit\Endpoint;
 
 use OnlineConvert\Client\Interfaced;
+use PHPUnit\Framework\TestCase;
 
-class Abstracted extends \PHPUnit_Framework_TestCase
+class Abstracted extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -42,7 +43,7 @@ class Abstracted extends \PHPUnit_Framework_TestCase
     /**
      * Method called before starting each test
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->clientMock = $this->getMockBuilder(Interfaced::class)
             ->disableOriginalConstructor()
@@ -52,7 +53,7 @@ class Abstracted extends \PHPUnit_Framework_TestCase
     /**
      * Method called at the end of each test
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->clientMock);
     }

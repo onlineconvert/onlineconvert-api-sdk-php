@@ -4,7 +4,7 @@ namespace Test\OnlineConvert\Unit\Handler;
 
 use OnlineConvert\Exception\JobFailedException;
 use OnlineConvert\Handler\CallbackHandler;
-
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CallbackTest
@@ -13,19 +13,19 @@ use OnlineConvert\Handler\CallbackHandler;
  *
  * @author Andrés Cevallos <a.cevallos@qaamgo.com>
  */
-class CallbackTest extends \PHPUnit_Framework_TestCase
+class CallbackTest extends TestCase
 {
     /**
      * @var CallbackHandler
      */
     private $handler;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->handler = new CallbackHandler();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unset(
             $this->handler
