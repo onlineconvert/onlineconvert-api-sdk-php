@@ -3,6 +3,7 @@ namespace OnlineConvert\Endpoint;
 
 use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Exception\FileNotExists;
+use OnlineConvert\Exception\InvalidEngineException;
 use OnlineConvert\Exception\OnlineConvertSdkException;
 use OnlineConvert\Exception\RequestException;
 
@@ -16,29 +17,65 @@ use OnlineConvert\Exception\RequestException;
 class InputEndpoint extends Abstracted
 {
     /**
-     * @const string
+     * @var string
      */
     const INPUT_TYPE_UPLOAD = 'upload';
 
     /**
-     * @const string
+     * @var string
      */
     const INPUT_TYPE_REMOTE = 'remote';
 
     /**
-     * @const string
+     * @var string
      */
     const INPUT_TYPE_INPUT_ID = 'input_id';
 
     /**
-     * @const string
+     * @var string
      */
     const INPUT_TYPE_GDRIVE_PICKER = 'gdrive_picker';
 
     /**
-     * @const string
+     * @var string
      */
     const INPUT_TYPE_CLOUD = 'cloud';
+
+    /**
+     * @var string
+     */
+    const ENGINE_AUTO = 'auto';
+
+    /**
+     * @var string
+     */
+    const ENGINE_VIDEO = 'video';
+
+    /**
+     * @var string
+     */
+    const ENGINE_FILE = 'file';
+
+    /**
+     * @var string
+     */
+    const ENGINE_WEBSITE = 'website';
+
+    /**
+     * @var string
+     */
+    const ENGINE_SCREENSHOT = 'screenshot';
+
+    /**
+     * @var array
+     */
+    const ENGINES = [
+        self::ENGINE_AUTO,
+        self::ENGINE_VIDEO,
+        self::ENGINE_FILE,
+        self::ENGINE_WEBSITE,
+        self::ENGINE_SCREENSHOT,
+    ];
 
     /**
      * Shortcut to post inputs with different type.
@@ -129,7 +166,17 @@ class InputEndpoint extends Abstracted
                 );
                 break;
             default:
-                return $this->postJobInputRemote($input['source'], $job['id']);
+                $engine = self::ENGINE_AUTO;
+
+                if (!empty($input['engine'])) {
+                    $engine = $input['engine'];
+                }
+
+                if (!in_array($engine, self::ENGINES, true)) {
+                    throw new InvalidEngineException('Engine ' . $engine . ' does not exist');
+                }
+
+                return $this->postJobInputRemote($input['source'], $job['id'], $engine);
         }
     }
 
@@ -161,20 +208,22 @@ class InputEndpoint extends Abstracted
     /**
      * Post remote input
      *
-     * @api
-     *
-     * @throws OnlineConvertSdkException when error on the request
-     *
      * @param string $source
      * @param string $jobId
+     * @param string $engine
      *
      * @return array
      */
-    public function postJobInputRemote($source, $jobId)
+    public function postJobInputRemote($source, $jobId, $engine = self::ENGINE_AUTO)
     {
+        if (!in_array($engine, self::ENGINES, true)) {
+            throw new InvalidEngineException('Engine ' . $engine . ' does not exist');
+        }
+
         $input = [
             'type'   => self::INPUT_TYPE_REMOTE,
             'source' => $source,
+            'engine' => $engine,
         ];
 
         $url = $this->client->generateUrl(Resources::JOB_ID_INPUTS, ['job_id' => $jobId]);

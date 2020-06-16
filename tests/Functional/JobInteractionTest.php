@@ -3,6 +3,7 @@
 namespace Test\OnlineConvert\Functional;
 
 use OnlineConvert\Endpoint\InputEndpoint;
+use OnlineConvert\Exception\InvalidEngineException;
 use OnlineConvert\Model\JobStatus;
 
 /**
@@ -136,5 +137,63 @@ class JobInteractionTest extends FunctionalTestCase
         );
         $this->assertArrayHasKey('conversion', $output['source'], 'We must know from which conversion is generated');
         $this->assertArrayHasKey('input', $output['source'], 'We must know from which input is generated');
+    }
+
+    /**
+     * @test
+     */
+    public function canPostInputWithEngineToAJob()
+    {
+        $jobDefinition = [
+            'conversion' => [
+                [
+                    'target' => 'png',
+                ],
+            ],
+        ];
+
+        $inputDefinition = [
+            'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+            'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+            'engine' => 'file'
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
+        $response = $this->api->getInputEndpoint()->postJobInput($inputDefinition, $job);
+
+        $this->assertEquals('file', $response['engine']);
+
+        $job = $jobsEndpoint->processJob($job);
+
+        $inputCount = 1;
+        $this->assertCount($inputCount, $job['input']);
+    }
+
+    /**
+     * @test
+     */
+    public function postInputWithEngineException()
+    {
+        $jobDefinition = [
+            'conversion' => [
+                [
+                    'target' => 'png',
+                ],
+            ],
+        ];
+
+        $inputDefinition = [
+            'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
+            'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+            'engine' => 'foo'
+        ];
+
+        $jobsEndpoint = $this->api->getJobsEndpoint();
+        $job          = $jobsEndpoint->postIncompleteJob($jobDefinition);
+
+        $this->expectException(InvalidEngineException::class);
+        $this->api->getInputEndpoint()->postJobInput($inputDefinition, $job);
     }
 }
