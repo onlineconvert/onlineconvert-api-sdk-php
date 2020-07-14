@@ -172,7 +172,7 @@ class OutputEndpoint extends Abstracted
                 'GET',
                 $url,
                 [
-                    'save_to'  => $saveTo,
+                    'sink'     => $saveTo,
                     'progress' => $progressFunction,
                 ]
             );
