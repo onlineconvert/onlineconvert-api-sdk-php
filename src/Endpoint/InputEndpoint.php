@@ -67,6 +67,11 @@ class InputEndpoint extends Abstracted
     const ENGINE_SCREENSHOT = 'screenshot';
 
     /**
+     * @var string
+     */
+    const ENGINE_SCREENSHOT_PDF = 'screenshot_pdf';
+
+    /**
      * @var array
      */
     const ENGINES = [
@@ -75,6 +80,7 @@ class InputEndpoint extends Abstracted
         self::ENGINE_FILE,
         self::ENGINE_WEBSITE,
         self::ENGINE_SCREENSHOT,
+        self::ENGINE_SCREENSHOT_PDF,
     ];
 
     /**
