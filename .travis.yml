@@ -26,3 +26,7 @@ script:
       echo "Only unit tests running";
       bin/phpunit -c phpunit.xml --testsuite unit;
     fi
+
+env:
+  global:
+    - XDEBUG_MODE=coverage
