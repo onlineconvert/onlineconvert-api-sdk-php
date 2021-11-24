@@ -89,17 +89,13 @@ class JobsEndpointTest extends Abstracted
     public function testWaitStatusForHigherStatus()
     {
         $this->clientMock
-            ->expects($this->at(0))
+            ->expects($this->exactly(3))
             ->method('sendRequest')
-            ->willReturn('{"id":"' . $this->aJobId . '","status":{"code":"downloading"}}');
-        $this->clientMock
-            ->expects($this->at(1))
-            ->method('sendRequest')
-            ->willReturn('{"id":"' . $this->aJobId . '","status":{"code":"processing"}}');
-        $this->clientMock
-            ->expects($this->at(2))
-            ->method('sendRequest')
-            ->willReturn('{"id":"' . $this->aJobId . '","status":{"code":"completed"}}');
+            ->willReturnOnConsecutiveCalls(
+                '{"id":"' . $this->aJobId . '","status":{"code":"downloading"}}',
+                '{"id":"' . $this->aJobId . '","status":{"code":"processing"}}',
+                '{"id":"' . $this->aJobId . '","status":{"code":"completed"}}'
+            );
 
         $response = $this->jobsEndpoint->waitStatus($this->aJobId, ['completed']);
 
