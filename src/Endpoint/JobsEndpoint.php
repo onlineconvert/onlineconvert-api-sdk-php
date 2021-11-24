@@ -280,8 +280,6 @@ class JobsEndpoint extends Abstracted
             throw new JobNotFoundException();
         }
 
-        $job['process'] = true;
-
         $this->waitStatus(
             $job['id'],
             [
@@ -292,10 +290,11 @@ class JobsEndpoint extends Abstracted
         );
 
         $url = $this->client->generateUrl(Resources::JOB_ID, ['job_id' => $job['id']]);
+
         $this->client->sendRequest(
             $url,
             Interfaced::METHOD_PATCH,
-            $job,
+            ['process' => true],
             [Interfaced::HEADER_OC_JOB_TOKEN => $this->userToken]
         );
 

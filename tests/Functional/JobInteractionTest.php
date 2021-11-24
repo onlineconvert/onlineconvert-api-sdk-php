@@ -154,7 +154,7 @@ class JobInteractionTest extends FunctionalTestCase
 
         $inputDefinition = [
             'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-            'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+            'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png',
             'engine' => 'file'
         ];
 
