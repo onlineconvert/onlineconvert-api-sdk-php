@@ -106,7 +106,6 @@ class RequestHelperTest extends TestCase
 
     /**
      * @dataProvider sendRequestDataProvider
-     * @expectedException \OnlineConvert\Exception\RequestException
      *
      * @param string $url
      * @param string $method
@@ -115,6 +114,7 @@ class RequestHelperTest extends TestCase
      */
     public function testSendRequestException($url, $method, array $defaultHeader, array $postData)
     {
+        $this->expectException(\OnlineConvert\Exception\RequestException::class);
         $this->setRequestExceptionMock();
 
         $this->spinRequestHelperMock
@@ -175,7 +175,6 @@ class RequestHelperTest extends TestCase
 
     /**
      * @dataProvider sendRequestDataProviderGet
-     * @expectedException \OnlineConvert\Exception\RequestException
      *
      * @param string $url
      * @param string $method
@@ -184,6 +183,8 @@ class RequestHelperTest extends TestCase
      */
     public function testSendRequestGetException($url, $method, array $defaultHeader, array $postData)
     {
+        $this->expectException(\OnlineConvert\Exception\RequestException::class);
+
         $this->setRequestExceptionMock();
 
         $this->spinRequestHelperMock
@@ -280,7 +281,6 @@ class RequestHelperTest extends TestCase
 
     /**
      * @dataProvider postLocalFileProvider
-     * @expectedException \OnlineConvert\Exception\RequestException
      *
      * @param string      $source
      * @param string      $url
@@ -289,6 +289,8 @@ class RequestHelperTest extends TestCase
      */
     public function testPostLocalFileException($source, $url, $defaultHeader, $token)
     {
+        $this->expectException(\OnlineConvert\Exception\RequestException::class);
+
         $this->setRequestExceptionMock();
 
         $this->fileSystemHelper
