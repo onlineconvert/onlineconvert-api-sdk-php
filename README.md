@@ -1,4 +1,4 @@
-Online Convert API version 2 PHP SDK v 2
+Online Convert API version 2 PHP SDK v 3
 ========================================
 
 This SDK provides a code base to interact with the API version 2 of [Online-Convert.com](http://www.online-convert.com/)
@@ -7,14 +7,9 @@ This SDK provides a code base to interact with the API version 2 of [Online-Conv
 
 Installation
 ------------
-#### Composer
-
-```json
-{
-	"require": {
-	    "qaamgo/onlineconvert-api-sdk": "^2"
-	}
-}
+The recommended way to install is through [Composer](https://getcomposer.org/).
+```bash
+composer require qaamgo/onlineconvert-api-sdk
 ```
 
 Getting started
