@@ -32,7 +32,7 @@ class Configuration
      *
      * @var bool
      */
-    public $https = false;
+    public $https = true;
 
     /**
      * Folder where the downloads of the outputs will be saved
