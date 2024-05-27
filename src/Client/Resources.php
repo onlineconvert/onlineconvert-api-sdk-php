@@ -14,6 +14,7 @@ class Resources
      * Api host
      *
      * @const string
+     * @deprecated
      */
     const HTTP_HOST = 'http://api2.online-convert.com';
 
@@ -22,5 +23,5 @@ class Resources
      *
      * @const string
      */
-    const HTTPS_HOST = 'https://api2.online-convert.com';
+    const HTTPS_HOST = 'https://api.api2convert.com/v2/';
 }
