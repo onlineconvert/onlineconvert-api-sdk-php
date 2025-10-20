@@ -2,10 +2,10 @@
 namespace OnlineConvert\Endpoint;
 
 use OnlineConvert\Client\Interfaced;
-use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use OnlineConvert\Exception\OnlineConvertSdkException;
 use OnlineConvert\Exception\OutputNotFound;
 use OnlineConvert\Exception\RequestException;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 
 /**
  * Manage Output Endpoint
@@ -146,12 +146,11 @@ class OutputEndpoint extends Abstracted
 
         try {
             try {
-                $headerRequest = $this->client->getClient()->request(
+                $response = $this->client->getClient()->request(
                     'HEAD',
                     $url
                 );
-
-                $contentDispositionHeader = $headerRequest->getHeader('Content-Disposition');
+                $contentDispositionHeader = $response->getHeaders()['content-disposition'];
 
                 if (isset($contentDispositionHeader[0])) {
                     preg_match("/filename=\"\s*(.*?)\s*\"/", $contentDispositionHeader[0], $filename);
@@ -168,15 +167,26 @@ class OutputEndpoint extends Abstracted
                 //nothing to do
             }
 
-            $this->client->getClient()->request(
+            $response = $this->client->getClient()->request(
                 'GET',
                 $url,
                 [
-                    'sink'     => $saveTo,
-                    'progress' => $progressFunction,
+                    'on_progress' => $progressFunction,
                 ]
             );
-        } catch (GuzzleRequestException $e) {
+
+
+            $fileHandler = fopen($saveTo, 'w');
+            if ($fileHandler === false) {
+                throw new \RuntimeException('Failed to open file for writing.');
+            }
+            foreach ($this->client->getClient()->stream($response) as $chunk) {
+                fwrite($fileHandler, $chunk->getContent());
+            }
+
+            fclose($fileHandler);
+
+        } catch (ExceptionInterface $e) {
             throw new RequestException($e->getMessage());
         }
 

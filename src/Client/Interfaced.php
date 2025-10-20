@@ -4,6 +4,7 @@ namespace OnlineConvert\Client;
 
 use OnlineConvert\Configuration;
 use OnlineConvert\Exception\RequestException;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * This class is a interface be implemented by the client class
@@ -97,7 +98,7 @@ interface Interfaced
     /**
      * Get the client instance used in the background
      *
-     * @return mixed
+     * @return HttpClientInterface
      */
     public function getClient();
 

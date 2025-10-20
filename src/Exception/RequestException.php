@@ -2,7 +2,8 @@
 
 namespace OnlineConvert\Exception;
 
-use Psr\Http\Message\ResponseInterface;
+
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * Thrown when the client has request errors

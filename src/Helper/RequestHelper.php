@@ -2,12 +2,12 @@
 
 namespace OnlineConvert\Helper;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Exception\RequestException;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Class RequestHelper
@@ -54,12 +54,12 @@ class RequestHelper
     /**
      * Sends a request
      *
-     * @param string     $url
-     * @param string     $method
-     * @param array      $defaultHeader
-     * @param Client     $client
-     * @param array|null $postData
-     * @param array      $customOptions
+     * @param string              $url
+     * @param string              $method
+     * @param array               $defaultHeader
+     * @param HttpClientInterface $client
+     * @param array|null          $postData
+     * @param array               $customOptions
      *
      * @return string
      */
@@ -67,7 +67,7 @@ class RequestHelper
         $url,
         $method,
         array $defaultHeader,
-        Client $client,
+        HttpClientInterface $client,
         array $postData = null,
         array $customOptions = []
     ) {
@@ -78,72 +78,47 @@ class RequestHelper
         $options = array_merge($customOptions, $options);
 
         if ($method == 'POST' || $method == 'PATCH' || $method == 'DELETE') {
-            $postData        = json_encode($postData);
-            $options['body'] = $postData;
-
-            try {
-                $request = $this->spinRequestHelper->doSpinRequest(
-                    $method,
-                    $url,
-                    $options,
-                    0,
-                    $client
-                );
-            } catch (GuzzleRequestException $e) {
-                $requestException = new RequestException($e->getMessage());
-
-                $response = $e->getResponse();
-
-                if ($response instanceof ResponseInterface) {
-                    $requestException->setResponse($response);
-                }
-
-                throw $requestException;
-            }
-        } else {
-            try {
-                $request = $this->spinRequestHelper->doSpinRequest(
-                    $method,
-                    $url,
-                    $options,
-                    0,
-                    $client
-                );
-            } catch (GuzzleRequestException $e) {
-                $requestException = new RequestException($e->getMessage());
-
-                $response = $e->getResponse();
-
-                if ($response instanceof ResponseInterface) {
-                    $requestException->setResponse($response);
-                }
-
-                throw $requestException;
-            }
+            $options['json'] = $postData;
         }
-
-        if (!in_array($request->getStatusCode(), [200, 201, 204, 301, 302])) {
-            throw new RequestException(
-                sprintf(
-                    'Status code: %d, was not valid. Reason: %s',
-                    $request->getStatusCode(),
-                    $request->getBody()->getContents()
-                )
+        try {
+            $response = $this->spinRequestHelper->doSpinRequest(
+                $method,
+                $url,
+                $options,
+                0,
+                $client
             );
-        }
+            if (!in_array($response->getStatusCode(), [200, 201, 204, 301, 302])) {
+                throw new RequestException(
+                    sprintf(
+                        'Status code: %d, was not valid. Reason: %s',
+                        $response->getStatusCode(),
+                        $response->getContent(false)
+                    )
+                );
+            }
 
-        return $request->getBody()->getContents();
+            return $response->getContent();
+        } catch (ExceptionInterface $e) {
+            $requestException = new RequestException($e->getMessage());
+
+            if ($e instanceof HttpExceptionInterface) {
+                $requestException->setResponse($e->getResponse());
+            }
+
+            throw $requestException;
+        }
     }
 
     /**
      * Posts a local file
      *
-     * @param string      $source
-     * @param string      $url
-     * @param array       $defaultHeader
-     * @param Client      $client
-     * @param string|null $token
-     * @param array       $customOptions
+     * @param string              $source
+     * @param string              $url
+     * @param array               $defaultHeader
+     * @param HttpClientInterface $client
+     * @param string|null         $token
+     * @param array               $customOptions
      *
      * @return string
      */
@@ -151,7 +126,7 @@ class RequestHelper
         $source,
         $url,
         $defaultHeader,
-        Client $client,
+        HttpClientInterface $client,
         $token = null,
         array $customOptions = []
     ) {
@@ -160,11 +135,8 @@ class RequestHelper
         }
 
         $options = [
-            'multipart' => [
-                [
-                    'name'     => 'file',
-                    'contents' => $this->fileSystemHelper->fopen($source, 'r'),
-                ],
+            'body' => [
+                'file' => $this->fileSystemHelper->fopen($source, 'r')
             ],
             'headers'   => $defaultHeader,
         ];
@@ -179,19 +151,17 @@ class RequestHelper
                 0,
                 $client
             );
-        } catch (GuzzleRequestException $e) {
+        } catch (ExceptionInterface $e) {
             $requestException = new RequestException($e->getMessage());
 
-            $response = $e->getResponse();
-
-            if ($response instanceof ResponseInterface) {
-                $requestException->setResponse($response);
+            if ($e instanceof HttpExceptionInterface) {
+                $requestException->setResponse($e->getResponse());
             }
 
             throw $requestException;
         }
 
-        return $request->getBody()->getContents();
+        return $request->getContent();
     }
 
     /**

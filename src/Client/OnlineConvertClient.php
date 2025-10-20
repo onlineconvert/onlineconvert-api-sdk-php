@@ -1,11 +1,12 @@
 <?php
 namespace OnlineConvert\Client;
 
-use GuzzleHttp\Client;
 use OnlineConvert\Configuration;
 use OnlineConvert\Helper\FileSystemHelper;
 use OnlineConvert\Helper\RequestHelper;
 use OnlineConvert\Helper\SpinRequestHelper;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * Class OnlineConvertClient
@@ -32,9 +33,9 @@ class OnlineConvertClient implements Interfaced
     protected $config;
 
     /**
-     * Guzzle client
+     * Symfony client
      *
-     * @var Client
+     * @var HttpClientInterface
      */
     protected $client;
 
@@ -73,7 +74,8 @@ class OnlineConvertClient implements Interfaced
 
         if ($this->config->https) {
             $this->host       = Resources::HTTPS_HOST;
-            $config['verify'] = false;
+            $config['verify_host'] = false;
+            $config['verify_peer'] = false;
         } else {
             $this->host = Resources::HTTP_HOST;
         }
@@ -90,7 +92,7 @@ class OnlineConvertClient implements Interfaced
         $config['base_uri'] = $this->host;
         $config['headers']  = $this->defaultHeader;
 
-        $this->client        = new Client($config);
+        $this->client        = HttpClient::create($config);
         $spinRequestHelper   = new SpinRequestHelper();
         $fileSystemHelper    = new FileSystemHelper();
         $this->requestHelper = new RequestHelper($spinRequestHelper, $fileSystemHelper);

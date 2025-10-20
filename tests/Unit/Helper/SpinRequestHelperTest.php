@@ -2,12 +2,12 @@
 
 namespace Test\OnlineConvert\Unit\Helper;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use OnlineConvert\Helper\SpinRequestHelper;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpClient\Exception\ServerException;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
+use Symfony\Contracts\HttpClient\RequestInterface;
 
 /**
  * Class SpinRequestHelperTest
@@ -30,7 +30,7 @@ class SpinRequestHelperTest extends TestCase
 
     public function setUp(): void
     {
-        $this->clientMock = $this->getMockBuilder(Client::class)
+        $this->clientMock = $this->getMockBuilder(HttpClientInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,7 +51,8 @@ class SpinRequestHelperTest extends TestCase
      */
     public function testDoSpinRequestSuccess($method, $url, array $options, $retries)
     {
-        $result = new Response(200, [], 'foo');
+        $result = $this->createMock(ResponseInterface::class);
+
         $this->clientMock
             ->expects($this->once())
             ->method('request')
@@ -74,9 +75,21 @@ class SpinRequestHelperTest extends TestCase
      */
     public function testDoSpinRequestException($method, $url, array $options, $retries, $calls, $errorCode)
     {
-        $request   = new Request('GET', 'any.url');
-        $response  = new Response($errorCode);
-        $exception = new RequestException('exceptionMessage', $request, $response);
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getInfo')
+            ->willReturnCallback(function(string $key) use ($errorCode) {
+                switch ($key) {
+                    case 'http_code':
+                        return $errorCode;
+                    case 'url':
+                        return 'someUrl';
+                    case 'response_headers':
+                        return ['HTTP/1.1 ' . $errorCode . ' exceptionMessage'];
+                    default:
+                        return null;
+                }
+            });
+        $exception = new ServerException($response);
 
         $this->clientMock
             ->expects($this->exactly($calls))
@@ -84,7 +97,7 @@ class SpinRequestHelperTest extends TestCase
             ->with($method, $url, $options)
             ->willThrowException($exception);
 
-        $this->expectException(RequestException::class);
+        $this->expectException(ServerException::class);
         $this->expectExceptionCode($errorCode);
         $this->expectExceptionMessage('exceptionMessage');
 

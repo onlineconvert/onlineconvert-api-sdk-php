@@ -1,7 +1,9 @@
 <?php
 namespace OnlineConvert\Helper;
 
-use GuzzleHttp\Exception\RequestException;
+use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * Class SpinRequestHelper
@@ -25,14 +27,14 @@ class SpinRequestHelper
     /**
      * Does the Request and retries the request on failure with certain status codes until MAX_RETRIES is reached
      *
-     * @param string             $method
-     * @param string             $url
-     * @param array              $options
-     * @param int                $retries
-     * @param \GuzzleHttp\Client $client
+     * @param string              $method
+     * @param string              $url
+     * @param array               $options
+     * @param int                 $retries
+     * @param HttpClientInterface $client
      *
-     * @return \Psr\Http\Message\ResponseInterface
-     * @throws \Exception
+     * @return ResponseInterface
+     * @throws ExceptionInterface
      */
     public function doSpinRequest($method, $url, array $options, $retries, $client)
     {
@@ -44,7 +46,7 @@ class SpinRequestHelper
                 $url,
                 $options
             );
-        } catch (RequestException $e) {
+        } catch (ExceptionInterface $e) {
             if ($retries < self::MAX_RETRIES && in_array($e->getCode(), self::RETRY_ON_STATUS_CODES, true)) {
                 $retries++;
                 sleep($retries);

@@ -4,14 +4,18 @@ namespace Test\OnlineConvert\Unit\Helper;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Helper\FileSystemHelper;
 use OnlineConvert\Helper\RequestHelper;
 use OnlineConvert\Helper\SpinRequestHelper;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpClient\Response\CurlResponse;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpClient\Response\NativeResponse;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * Class RequestHelperTest
@@ -52,7 +56,7 @@ class RequestHelperTest extends TestCase
 
     public function setUp(): void
     {
-        $this->clientMock            = $this->getMockBuilder(Client::class)
+        $this->clientMock            = $this->getMockBuilder(HttpClientInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->spinRequestHelperMock = $this->getMockBuilder(SpinRequestHelper::class)
@@ -64,7 +68,8 @@ class RequestHelperTest extends TestCase
         $this->responseMock          = $this->getMockBuilder(ResponseInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestExceptionMock = $this->getMockBuilder(RequestException::class)
+
+        $this->requestExceptionMock = $this->getMockBuilder(HttpExceptionInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -93,12 +98,20 @@ class RequestHelperTest extends TestCase
      */
     public function testSendRequestSuccess($url, $method, array $defaultHeader, array $postData)
     {
-        $response = new Response('200', [], 'foobar');
+
+        $this->responseMock->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(200);
+
+        $this->responseMock->expects($this->once())
+            ->method('getContent')
+            ->willReturn('foobar');
+
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
-            ->with($method, $url, ['body' => json_encode($postData), 'headers' => $defaultHeader], 0, $this->clientMock)
-            ->willReturn($response);
+            ->with($method, $url, ['json' => $postData, 'headers' => $defaultHeader], 0, $this->clientMock)
+            ->willReturn($this->responseMock);
 
         $result = $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
         $this->assertEquals('foobar', $result);
@@ -120,7 +133,7 @@ class RequestHelperTest extends TestCase
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
-            ->with($method, $url, ['body' => json_encode($postData), 'headers' => $defaultHeader], 0, $this->clientMock)
+            ->with($method, $url, ['json' => $postData, 'headers' => $defaultHeader], 0, $this->clientMock)
             ->willThrowException($this->requestExceptionMock);
 
         $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
@@ -136,12 +149,20 @@ class RequestHelperTest extends TestCase
      */
     public function testSendRequestGetSuccess($url, $method, array $defaultHeader, array $postData)
     {
-        $response = new Response('200', [], 'foobar');
+
+        $this->responseMock->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(200);
+
+        $this->responseMock->expects($this->once())
+            ->method('getContent')
+            ->willReturn('foobar');
+
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
             ->with($method, $url, ['headers' => $defaultHeader], 0, $this->clientMock)
-            ->willReturn($response);
+            ->willReturn($this->responseMock);
 
         $result = $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
         $this->assertEquals('foobar', $result);
@@ -157,12 +178,20 @@ class RequestHelperTest extends TestCase
      */
     public function testSendRequestIllegalResonseCode($url, $method, array $defaultHeader, array $postData)
     {
-        $response = new Response(404, [], 'foobar');
+
+        $this->responseMock->expects($this->exactly(2))
+            ->method('getStatusCode')
+            ->willReturn(404);
+
+        $this->responseMock->expects($this->once())
+            ->method('getContent')
+            ->willReturn('foobar');
+
         $this->spinRequestHelperMock
             ->expects($this->once())
             ->method('doSpinRequest')
             ->with($method, $url, ['headers' => $defaultHeader], 0, $this->clientMock)
-            ->willReturn($response);
+            ->willReturn($this->responseMock);;
 
         try {
             $result = $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
@@ -248,7 +277,13 @@ class RequestHelperTest extends TestCase
      */
     public function testPostLocalFileSuccess($source, $url, $defaultHeader, $token)
     {
-        $response = new Response(200, [], 'foobarbaz');
+
+        $this->responseMock->expects($this->never())
+            ->method('getStatusCode');
+
+        $this->responseMock->expects($this->once())
+            ->method('getContent')
+            ->willReturn('foobarbaz');;
 
         $this->fileSystemHelper
             ->expects($this->once())
@@ -263,18 +298,15 @@ class RequestHelperTest extends TestCase
                 'POST',
                 $url,
                 [
-                    'multipart' => [
-                        [
-                            'name'     => 'file',
-                            'contents' => 'foobar',
-                        ],
+                    'body' => [
+                        'file' => 'foobar',
                     ],
                     'headers'   => $defaultHeader,
                 ],
                 0,
                 $this->clientMock
             )
-            ->willReturn($response);
+            ->willReturn($this->responseMock);;
 
         $this->obj->postLocalFile($source, $url, $defaultHeader, $this->clientMock, $token);
     }
@@ -306,11 +338,8 @@ class RequestHelperTest extends TestCase
                 'POST',
                 $url,
                 [
-                    'multipart' => [
-                        [
-                            'name'     => 'file',
-                            'contents' => 'foobar',
-                        ],
+                    'body' => [
+                        'file'     => 'foobar',
                     ],
                     'headers'   => $defaultHeader,
                 ],
