@@ -99,7 +99,7 @@ class OnlineConvertClient implements Interfaced
     /**
      * {@inheritDoc}
      */
-    public function sendRequest($url, $method, array $postData = null, array $headers = [])
+    public function sendRequest($url, $method, ?array $postData = null, array $headers = [])
     {
         $method = strtoupper($method);
 
@@ -200,7 +200,7 @@ class OnlineConvertClient implements Interfaced
      *
      * @param array|null $headers
      */
-    protected function mergeHeaders(array $headers = null)
+    protected function mergeHeaders(?array $headers = null)
     {
         if ($headers !== null) {
             $this->defaultHeader = array_filter($this->defaultHeader);
