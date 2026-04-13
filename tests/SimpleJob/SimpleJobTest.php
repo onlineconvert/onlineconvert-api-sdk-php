@@ -16,10 +16,11 @@ class SimpleJobTest extends SimpleJobTestCase
     public function downloadsAJobOutputCorrectly()
     {
         $ApiKey    = getenv('OC_API_KEY');
-        $SimpleJob = new SimpleJob($ApiKey);
+        $host      = getenv('OC_API_URL') ?: null;
+        $SimpleJob = new SimpleJob($ApiKey, $host);
 
         $job = $SimpleJob
-            ->download('http://cdn.online-convert.com/images/logo-top.png')
+            ->download('https://example-files.online-convert.com/raster%20image/png/example_small.png')
             ->upload(self::FILES_PATH . 'oc_logo.png')
             ->addConversion(
                 'jpg',

@@ -67,12 +67,14 @@ class SimpleJob
     /**
      * SimpleJob constructor.
      *
-     * @param string $apiKey
+     * @param string      $apiKey
+     * @param string|null $host
      */
-    public function __construct($apiKey)
+    public function __construct($apiKey, $host = null)
     {
         $this->config = new Configuration();
         $this->config->setApiKey('main', $apiKey);
+        $this->config->setHost($host);
     }
 
     /**

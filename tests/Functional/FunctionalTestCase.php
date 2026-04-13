@@ -44,8 +44,11 @@ class FunctionalTestCase extends TestCase
     {
         parent::setUp();
 
+        $host = getenv('OC_API_URL') ?: null;
+
         $this->config = new Configuration();
         $this->config->setApiKey('main', getenv('OC_API_KEY'));
+        $this->config->setHost($host);
         $this->config->downloadFolder = self::DOWNLOADS_PATH;
         $this->client = new OnlineConvertClient($this->config, 'main');
         $this->api    = new Api($this->client);

@@ -6,10 +6,11 @@ cache:
 
 matrix:
   include:
-    - php: 7.1
-    - php: 7.2
-    - php: 7.3
-    - php: 7.4
+    - php: 8.0
+    - php: 8.1
+    - php: 8.2
+    - php: 8.3
+    - php: 8.4
 
 before_install:
   - composer selfupdate
@@ -21,10 +22,10 @@ script:
   - if [[ "$TRAVIS_BRANCH" == "master" && $TRAVIS_PULL_REQUEST == false ]];
     then
       echo "All tests running";
-      bin/phpunit -c phpunit.xml;
+      vendor/bin/phpunit -c phpunit.xml;
     else
       echo "Only unit tests running";
-      bin/phpunit -c phpunit.xml --testsuite unit;
+      vendor/bin/phpunit -c phpunit.xml --testsuite unit;
     fi
 
 env:

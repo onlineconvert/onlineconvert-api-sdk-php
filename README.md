@@ -1,7 +1,11 @@
-Online Convert API version 2 PHP SDK v 3
-========================================
+Online Convert API version 2 PHP SDK v 4.1
+==========================================
 
 This SDK provides a code base to interact with the API version 2 of [api2convert.com](http://www.api2convert.com/)
+
+Requirements
+------------
+This release supports PHP 8.0 and later.
 
 [![Tests](https://github.com/onlineconvert/onlineconvert-api-sdk-php/actions/workflows/ci.yml/badge.svg)](https://github.com/onlineconvert/onlineconvert-api-sdk-php/actions/workflows/ci.yml)
 
