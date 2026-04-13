@@ -13,7 +13,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-versions: ["8.3", "8.2", "8.1", "8.0", "7.4", "7.3", "7.2", "7.1"]
+                php-versions: ["8.4", "8.3", "8.2", "8.1", "8.0"]
 
         steps:
             - name: Checkout
@@ -39,6 +39,6 @@ jobs:
               run: composer install --prefer-dist --no-progress
 
             - name: Execute tests
-              run: bin/phpunit --testsuite unit
+              run: vendor/bin/phpunit --testsuite unit
               env:
                   OC_API_KEY: ${{ secrets.OC_API_KEY }}

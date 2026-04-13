@@ -42,6 +42,13 @@ class Configuration
     public $downloadFolder = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'downloads';
 
     /**
+     * Custom API host
+     *
+     * @var string|null
+     */
+    private $host;
+
+    /**
      * get api key by prefix
      *
      * @return string
@@ -90,6 +97,22 @@ class Configuration
     public function setDownloadFolder($downloadFolder)
     {
         $this->downloadFolder = $downloadFolder;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * @param string|null $host
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
     }
 
     /**

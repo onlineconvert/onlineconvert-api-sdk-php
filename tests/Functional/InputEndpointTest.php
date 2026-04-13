@@ -26,7 +26,7 @@ class InputEndpointTest extends FunctionalTestCase
 
         $inputDefinition = [
             'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-            'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+            'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png',
         ];
 
         $jobsEndpoint = $this->api->getJobsEndpoint();
@@ -49,11 +49,11 @@ class InputEndpointTest extends FunctionalTestCase
             'input'      => [
                 [
                     'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-                    'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+                    'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png',
                 ],
                 [
                     'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-                    'source' => 'http://cdn.online-convert.com/images/correct.png',
+                    'source' => 'https://example-files.online-convert.com/raster%20image/png/example.png',
                 ],
             ],
             'conversion' => [
@@ -87,11 +87,11 @@ class InputEndpointTest extends FunctionalTestCase
         $inputDefinition = [
             [
                 'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-                'source' => 'http://cdn.online-convert.com/images/logo-top.png',
+                'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png',
             ],
             [
                 'type'   => InputEndpoint::INPUT_TYPE_REMOTE,
-                'source' => 'http://cdn.online-convert.com/images/correct.png',
+                'source' => 'https://example-files.online-convert.com/raster%20image/png/example.png',
             ],
         ];
 

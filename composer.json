@@ -1,17 +1,17 @@
 {
   "name": "qaamgo/onlineconvert-api-sdk",
-  "description": "Sdk for using the Online Convert Api version 2",
+  "description": "SDK for using the Online Convert API version 2",
   "type": "library",
   "keywords": ["qaamgo", "online-convert", "php", "sdk", "api", "REST", "convert", "files"],
   "license": "Apache-2.0",
   "require": {
-    "php": "^7.1|^8.0",
-    "guzzlehttp/guzzle": "^6.5.7|^7.4.4"
+    "php": "^8.0",
+    "guzzlehttp/guzzle": "^7.10"
   },
   "require-dev": {
-    "phpunit/phpunit": "~7.5 || ^9.3",
-    "symfony/finder": "^3",
-    "symfony/filesystem": "^3"
+    "phpunit/phpunit": "^9.6.33",
+    "symfony/finder": "^5.4 || ^6.4 || ^7.4",
+    "symfony/filesystem": "^5.4 || ^6.4 || ^7.4"
   },
   "autoload-dev": {
     "psr-4": { "Test\\OnlineConvert\\": "tests/" }
@@ -20,8 +20,5 @@
     "psr-4": {
       "OnlineConvert\\" : "src/"
     }
-  },
-  "config": {
-    "bin-dir": "bin"
   }
 }
