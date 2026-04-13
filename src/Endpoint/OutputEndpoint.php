@@ -104,7 +104,7 @@ class OutputEndpoint extends Abstracted
      *
      * @return array when error on the request
      */
-    public function downloadOutputs(array $job, callable $progressFunction = null)
+    public function downloadOutputs(array $job, ?callable $progressFunction = null)
     {
         $outputs = $job['output'];
 
@@ -132,7 +132,7 @@ class OutputEndpoint extends Abstracted
      *
      * @return string
      */
-    private function downloadUrl($url, $outputId, callable $progressFunction = null)
+    private function downloadUrl($url, $outputId, ?callable $progressFunction = null)
     {
         $saveTo = $this->client->getConfig()->downloadFolder . DIRECTORY_SEPARATOR . $outputId;
 

@@ -68,7 +68,7 @@ class RequestHelper
         $method,
         array $defaultHeader,
         Client $client,
-        array $postData = null,
+        ?array $postData = null,
         array $customOptions = []
     ) {
         $options = [
