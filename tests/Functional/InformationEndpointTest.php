@@ -2,14 +2,14 @@
 
 namespace Test\OnlineConvert\Functional;
 
+use PHPUnit\Framework\Attributes\Test;
+
 /**
  * Tests interaction with the information endpoint.
  */
 class InformationEndpointTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function apiSchemaContainsBasicAndContactInformation()
     {
         $schema = $this->api->getInformationEndpoint()->getSchema();
@@ -22,9 +22,7 @@ class InformationEndpointTest extends FunctionalTestCase
         $this->assertArrayHasKey('version', $schema['info']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function statusCodesAreInformedCorrectly()
     {
         $statusList = $this->api->getInformationEndpoint()->getStatusesList();
@@ -39,9 +37,7 @@ class InformationEndpointTest extends FunctionalTestCase
         $this->assertContains('failed', $statusCodes);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canGetConversionSchema()
     {
         $target     = 'mp3';

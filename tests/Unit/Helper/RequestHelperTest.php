@@ -10,12 +10,15 @@ use OnlineConvert\Exception\HTTPMethodNotAllowed;
 use OnlineConvert\Helper\FileSystemHelper;
 use OnlineConvert\Helper\RequestHelper;
 use OnlineConvert\Helper\SpinRequestHelper;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class RequestHelperTest
  */
+#[AllowMockObjectsWithoutExpectations]
 class RequestHelperTest extends TestCase
 {
     /**
@@ -83,14 +86,7 @@ class RequestHelperTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider sendRequestDataProvider
-     *
-     * @param string $url
-     * @param string $method
-     * @param array  $defaultHeader
-     * @param array  $postData
-     */
+    #[DataProvider('sendRequestDataProvider')]
     public function testSendRequestSuccess($url, $method, array $defaultHeader, array $postData)
     {
         $response = new Response('200', [], 'foobar');
@@ -104,14 +100,7 @@ class RequestHelperTest extends TestCase
         $this->assertEquals('foobar', $result);
     }
 
-    /**
-     * @dataProvider sendRequestDataProvider
-     *
-     * @param string $url
-     * @param string $method
-     * @param array  $defaultHeader
-     * @param array  $postData
-     */
+    #[DataProvider('sendRequestDataProvider')]
     public function testSendRequestException($url, $method, array $defaultHeader, array $postData)
     {
         $this->expectException(\OnlineConvert\Exception\RequestException::class);
@@ -126,14 +115,7 @@ class RequestHelperTest extends TestCase
         $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
     }
 
-    /**
-     * @dataProvider sendRequestDataProviderGet
-     *
-     * @param string $url
-     * @param string $method
-     * @param array  $defaultHeader
-     * @param array  $postData
-     */
+    #[DataProvider('sendRequestDataProviderGet')]
     public function testSendRequestGetSuccess($url, $method, array $defaultHeader, array $postData)
     {
         $response = new Response('200', [], 'foobar');
@@ -147,14 +129,7 @@ class RequestHelperTest extends TestCase
         $this->assertEquals('foobar', $result);
     }
 
-    /**
-     * @dataProvider sendRequestDataProviderGet
-     *
-     * @param string $url
-     * @param string $method
-     * @param array  $defaultHeader
-     * @param array  $postData
-     */
+    #[DataProvider('sendRequestDataProviderGet')]
     public function testSendRequestIllegalResonseCode($url, $method, array $defaultHeader, array $postData)
     {
         $response = new Response(404, [], 'foobar');
@@ -173,14 +148,7 @@ class RequestHelperTest extends TestCase
         $this->assertEquals($expected, $message);
     }
 
-    /**
-     * @dataProvider sendRequestDataProviderGet
-     *
-     * @param string $url
-     * @param string $method
-     * @param array  $defaultHeader
-     * @param array  $postData
-     */
+    #[DataProvider('sendRequestDataProviderGet')]
     public function testSendRequestGetException($url, $method, array $defaultHeader, array $postData)
     {
         $this->expectException(\OnlineConvert\Exception\RequestException::class);
@@ -196,7 +164,7 @@ class RequestHelperTest extends TestCase
         $this->obj->sendRequest($url, $method, $defaultHeader, $this->clientMock, $postData);
     }
 
-    public function sendRequestDataProvider()
+    public static function sendRequestDataProvider()
     {
         return [
             [
@@ -220,7 +188,7 @@ class RequestHelperTest extends TestCase
         ];
     }
 
-    public function sendRequestDataProviderGet()
+    public static function sendRequestDataProviderGet()
     {
         return [
             [
@@ -238,14 +206,7 @@ class RequestHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider postLocalFileProvider
-     *
-     * @param string      $source
-     * @param string      $url
-     * @param array       $defaultHeader
-     * @param string|null $token
-     */
+    #[DataProvider('postLocalFileProvider')]
     public function testPostLocalFileSuccess($source, $url, $defaultHeader, $token)
     {
         $response = new Response(200, [], 'foobarbaz');
@@ -279,14 +240,7 @@ class RequestHelperTest extends TestCase
         $this->obj->postLocalFile($source, $url, $defaultHeader, $this->clientMock, $token);
     }
 
-    /**
-     * @dataProvider postLocalFileProvider
-     *
-     * @param string      $source
-     * @param string      $url
-     * @param array       $defaultHeader
-     * @param string|null $token
-     */
+    #[DataProvider('postLocalFileProvider')]
     public function testPostLocalFileException($source, $url, $defaultHeader, $token)
     {
         $this->expectException(\OnlineConvert\Exception\RequestException::class);
@@ -322,7 +276,7 @@ class RequestHelperTest extends TestCase
         $this->obj->postLocalFile($source, $url, $defaultHeader, $this->clientMock, $token);
     }
 
-    public function postLocalFileProvider()
+    public static function postLocalFileProvider()
     {
         return [
             [
@@ -340,11 +294,7 @@ class RequestHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider checkMethodToSendRequestSuccessDataProvider
-     *
-     * @param string $method
-     */
+    #[DataProvider('checkMethodToSendRequestSuccessDataProvider')]
     public function testCheckMethodToSendRequestSuccess($method)
     {
         try {
@@ -355,7 +305,7 @@ class RequestHelperTest extends TestCase
         $this->assertTrue(!isset($message));
     }
 
-    public function checkMethodToSendRequestSuccessDataProvider()
+    public static function checkMethodToSendRequestSuccessDataProvider()
     {
         return [
           [
@@ -373,11 +323,7 @@ class RequestHelperTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider checkMethodToSendRequestExceptionDataProvider
-     *
-     * @param string $method
-     */
+    #[DataProvider('checkMethodToSendRequestExceptionDataProvider')]
     public function testCheckMethodToSendRequestException($method)
     {
         try {
@@ -388,7 +334,7 @@ class RequestHelperTest extends TestCase
         $this->assertEquals($method . ' is not allowed', $message);
     }
 
-    public function checkMethodToSendRequestExceptionDataProvider()
+    public static function checkMethodToSendRequestExceptionDataProvider()
     {
         return [
             [

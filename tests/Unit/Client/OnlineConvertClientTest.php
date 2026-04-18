@@ -5,6 +5,7 @@ namespace Test\OnlineConvert\Unit\Client;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Configuration;
 use OnlineConvert\Endpoint\Resources;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 
@@ -97,12 +98,7 @@ class OnlineConvertClientTest extends TestCase
         $this->assertEquals($expect, $actual);
     }
 
-    /**
-     * @dataProvider getHeaderDataProvider
-     *
-     * @param string $headerKey
-     * @param string|boolea $expected
-     */
+    #[DataProvider('getHeaderDataProvider')]
     public function testGetHeader($headerKey, $expected)
     {
         $this->client = new OnlineConvertClient($this->config, 'main');
@@ -111,7 +107,7 @@ class OnlineConvertClientTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function getHeaderDataProvider()
+    public static function getHeaderDataProvider()
     {
         return [
             [

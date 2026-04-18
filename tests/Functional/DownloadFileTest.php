@@ -5,6 +5,7 @@ namespace Test\OnlineConvert\Functional;
 use OnlineConvert\Endpoint\InputEndpoint;
 use OnlineConvert\Endpoint\OutputEndpoint;
 use OnlineConvert\Exception\OutputNotFound;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -12,9 +13,7 @@ use Symfony\Component\Finder\Finder;
  */
 class DownloadFileTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function downloadsAJobOutputCorrectly()
     {
         $jobDefinition = [
@@ -51,9 +50,7 @@ class DownloadFileTest extends FunctionalTestCase
         $this->assertCount($expectedFileCount, $finderIterator, 'There must be one file in the output download folder');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function failsToDownloadIfJobsContainsNoOutputs()
     {
         $this->expectException(OutputNotFound::class);

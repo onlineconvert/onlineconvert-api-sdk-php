@@ -5,15 +5,14 @@ namespace Test\OnlineConvert\Functional;
 use OnlineConvert\Endpoint\InputEndpoint;
 use OnlineConvert\Exception\InvalidEngineException;
 use OnlineConvert\Model\JobStatus;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests the job interaction with the different endpoints.
  */
 class JobInteractionTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function jobWithFileUploadIsCompleted()
     {
         $jobDefinition = [
@@ -37,9 +36,7 @@ class JobInteractionTest extends FunctionalTestCase
         $this->assertCount($outputCount, $job['output']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createEmptyJobAndUpdateWithNewInput()
     {
         $jobsEndpoint  = $this->api->getJobsEndpoint();
@@ -64,9 +61,7 @@ class JobInteractionTest extends FunctionalTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getsTheLatestCompletedJobs()
     {
         $jobs = $this->api->getJobsEndpoint()->getJobsByStatus(JobStatus::STATUS_COMPLETED);
@@ -75,9 +70,7 @@ class JobInteractionTest extends FunctionalTestCase
         $this->assertEquals(JobStatus::STATUS_COMPLETED, $jobs[0]['status']['code']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canDeleteJobOutputs()
     {
         $jobDefinition = [
@@ -100,9 +93,7 @@ class JobInteractionTest extends FunctionalTestCase
         $this->assertTrue($outputDeleted, 'The output should have been deleted but something failed');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canGetTheOutputInformation()
     {
         $jobDefinition = [
@@ -139,9 +130,7 @@ class JobInteractionTest extends FunctionalTestCase
         $this->assertArrayHasKey('input', $output['source'], 'We must know from which input is generated');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canPostInputWithEngineToAJob()
     {
         $jobDefinition = [
@@ -171,9 +160,7 @@ class JobInteractionTest extends FunctionalTestCase
         $this->assertCount($inputCount, $job['input']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function postInputWithEngineException()
     {
         $jobDefinition = [

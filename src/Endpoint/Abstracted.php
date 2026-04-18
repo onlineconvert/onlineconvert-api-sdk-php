@@ -67,7 +67,7 @@ class Abstracted
      */
     public function responseToArray($response)
     {
-        return json_decode($response, true);
+        return json_decode($response ?? '', true);
     }
 
     /**
