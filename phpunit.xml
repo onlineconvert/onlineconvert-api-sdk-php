@@ -9,13 +9,6 @@
       <directory>tests/SimpleJob</directory>
     </testsuite>
   </testsuites>
-  <coverage includeUncoveredFiles="true">
-    <report>
-      <html outputDirectory="build/coverage"/>
-      <clover outputFile="build/logs/clover.xml"/>
-      <crap4j outputFile="build/logs/crap4j.xml"/>
-    </report>
-  </coverage>
   <logging>
     <junit outputFile="build/logs/junit.xml"/>
   </logging>
