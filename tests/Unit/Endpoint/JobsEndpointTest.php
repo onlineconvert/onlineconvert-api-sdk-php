@@ -6,11 +6,13 @@ use OnlineConvert\Client\Interfaced;
 use OnlineConvert\Client\Resources as ClientResources;
 use OnlineConvert\Endpoint\JobsEndpoint;
 use OnlineConvert\Endpoint\Resources;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class JobsEndpointTest
  * @package Test\OnlineConvert\Endpoint
  */
+#[AllowMockObjectsWithoutExpectations]
 class JobsEndpointTest extends Abstracted
 {
     /**

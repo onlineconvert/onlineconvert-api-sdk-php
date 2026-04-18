@@ -3,6 +3,7 @@
 namespace Test\OnlineConvert\Unit\Endpoint;
 
 use OnlineConvert\Model\JobStatus;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,65 +17,55 @@ class JobStatusTest extends TestCase
      *
      * @return array
      */
-    public function statusProvider()
+    public static function statusProvider()
     {
         return [
             'Testing status "incomplete"' => [
-                'status'            => 'incomplete',
-                'canBeUpdatedBy'    => 'ready',
-                'canNotBeUpdatedBy' => null,
-                'isCompleted'       => false,
-                'isFailed'          => false,
+                'incomplete',
+                'ready',
+                null,
+                false,
+                false,
             ],
             'Testing status "ready"' => [
-                'status'            => 'ready',
-                'canBeUpdatedBy'    => 'downloading',
-                'canNotBeUpdatedBy' => 'incomplete',
-                'isCompleted'       => false,
-                'isFailed'          => false,
+                'ready',
+                'downloading',
+                'incomplete',
+                false,
+                false,
             ],
             'Testing status "downloading"' => [
-                'status'            => 'downloading',
-                'canBeUpdatedBy'    => 'processing',
-                'canNotBeUpdatedBy' => 'incomplete',
-                'isCompleted'       => false,
-                'isFailed'          => false,
+                'downloading',
+                'processing',
+                'incomplete',
+                false,
+                false,
             ],
             'Testing status "processing"' => [
-                'status'            => 'processing',
-                'canBeUpdatedBy'    => 'completed',
-                'canNotBeUpdatedBy' => 'incomplete',
-                'isCompleted'       => false,
-                'isFailed'          => false,
+                'processing',
+                'completed',
+                'incomplete',
+                false,
+                false,
             ],
             'Testing status "failed"' => [
-                'status'            => 'failed',
-                'canBeUpdatedBy'    => 'completed',
-                'canNotBeUpdatedBy' => 'incomplete',
-                'isCompleted'       => false,
-                'isFailed'          => true,
+                'failed',
+                'completed',
+                'incomplete',
+                false,
+                true,
             ],
             'Testing status "completed"' => [
-                'status'            => 'completed',
-                'canBeUpdatedBy'    => null,
-                'canNotBeUpdatedBy' => 'incomplete',
-                'isCompleted'       => true,
-                'isFailed'          => false,
+                'completed',
+                null,
+                'incomplete',
+                true,
+                false,
             ],
         ];
     }
 
-    /**
-     * Test Status behavior
-     *
-     * @dataProvider statusProvider
-     *
-     * @param string  $statusCode
-     * @param string  $canBeUpdatedByCode
-     * @param string  $canNotBeUpdatedByCode
-     * @param boolean $isCompleted
-     * @param boolean $isFailed
-     */
+    #[DataProvider('statusProvider')]
     public function testStatus($statusCode, $canBeUpdatedByCode, $canNotBeUpdatedByCode, $isCompleted, $isFailed)
     {
         $status = new JobStatus($statusCode);

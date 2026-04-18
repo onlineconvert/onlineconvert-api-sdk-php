@@ -7,6 +7,8 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use OnlineConvert\Helper\SpinRequestHelper;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -14,6 +16,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @package Test\OnlineConvert\Helper
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpinRequestHelperTest extends TestCase
 {
     /**
@@ -42,13 +45,7 @@ class SpinRequestHelperTest extends TestCase
         unset($this->obj);
     }
 
-    /**
-     * @dataProvider doSpinRequestDataProvider
-     *
-     * @param string $method
-     * @param string $url
-     * @param array  $options
-     */
+    #[DataProvider('doSpinRequestDataProvider')]
     public function testDoSpinRequestSuccess($method, $url, array $options, $retries)
     {
         $result = new Response(200, [], 'foo');
@@ -62,16 +59,7 @@ class SpinRequestHelperTest extends TestCase
         $this->assertEquals($result, $actual);
     }
 
-    /**
-     * @dataProvider doSpinRequestExceptionDataProvider
-     *
-     * @param string $method
-     * @param string $url
-     * @param array  $options
-     * @param int    $retries
-     * @param int    $calls
-     * @param int    $errorCode
-     */
+    #[DataProvider('doSpinRequestExceptionDataProvider')]
     public function testDoSpinRequestException($method, $url, array $options, $retries, $calls, $errorCode)
     {
         $request   = new Request('GET', 'any.url');
@@ -91,53 +79,53 @@ class SpinRequestHelperTest extends TestCase
         $this->obj->doSpinRequest($method, $url, $options, $retries, $this->clientMock);
     }
 
-    public function doSpinRequestDataProvider()
+    public static function doSpinRequestDataProvider()
     {
         return [
             [
-                'method'  => 'GET',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'GET',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 0,
             ],
             [
-                'method'  => 'POST',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'POST',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 1,
             ],
             [
-                'method'  => 'DELETE',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'DELETE',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 100,
             ],
         ];
     }
 
-    public function doSpinRequestExceptionDataProvider()
+    public static function doSpinRequestExceptionDataProvider()
     {
         return [
             [
-                'method'  => 'GET',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'GET',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 0,
                 6,
                 429,
             ],
             [
-                'method'  => 'POST',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'POST',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 1,
                 5,
                 429,
             ],
             [
-                'method'  => 'DELETE',
-                'url'     => 'someUrl',
-                'options' => ['someOption' => 'someValue'],
+                'DELETE',
+                'someUrl',
+                ['someOption' => 'someValue'],
                 100,
                 1,
                 429,

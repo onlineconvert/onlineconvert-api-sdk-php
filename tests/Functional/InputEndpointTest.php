@@ -3,6 +3,7 @@
 namespace Test\OnlineConvert\Functional;
 
 use OnlineConvert\Endpoint\InputEndpoint;
+use PHPUnit\Framework\Attributes\Test;
 
 /**
  * Tests general interaction with the input endpoint.
@@ -11,9 +12,7 @@ use OnlineConvert\Endpoint\InputEndpoint;
  */
 class InputEndpointTest extends FunctionalTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function canPostAnInputToAJob()
     {
         $jobDefinition = [
@@ -40,9 +39,7 @@ class InputEndpointTest extends FunctionalTestCase
         $this->assertCount($inputCount, $job['input']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getsAllTheInputsFromAJob()
     {
         $jobDefinition = [
@@ -71,9 +68,7 @@ class InputEndpointTest extends FunctionalTestCase
         $this->assertCount($inputCount, $inputs, "There should be $inputCount inputs");
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canPostMultipleRemoteInputsToAJob()
     {
         $jobDefinition = [
@@ -106,9 +101,7 @@ class InputEndpointTest extends FunctionalTestCase
         $this->assertCount($inputCount, $job['input']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canPostMultipleInputIdsInputsToAJob()
     {
         $jobDefinition = [

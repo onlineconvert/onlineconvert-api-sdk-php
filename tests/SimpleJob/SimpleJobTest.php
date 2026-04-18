@@ -3,6 +3,7 @@
 namespace Test\OnlineConvert\SimpleJob;
 
 use OnlineConvert\SimpleJob;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -10,9 +11,7 @@ use Symfony\Component\Finder\Finder;
  */
 class SimpleJobTest extends SimpleJobTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function downloadsAJobOutputCorrectly()
     {
         $ApiKey    = getenv('OC_API_KEY');
