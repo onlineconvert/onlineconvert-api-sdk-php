@@ -1,3 +1,29 @@
+> [!WARNING]
+> ## ⚠️ This SDK is deprecated
+> **`qaamgo/onlineconvert-api-sdk` is no longer maintained.** Please migrate to the new
+> **API2Convert PHP SDK** → **https://github.com/QaamGo/api2convert-php**
+> (Packagist: [`api2convert/sdk`](https://packagist.org/packages/api2convert/sdk)).
+
+## Migrating to the new SDK
+
+**Install the new package:**
+
+```bash
+composer require api2convert/sdk guzzlehttp/guzzle
+```
+
+**Convert a file** — what used to be a multi-step job flow (create job → add input → set
+conversion → start → poll → download) is now a single call:
+
+```php
+$client = new Api2Convert\Api2Convert('YOUR_API_KEY');
+$client->convert('photo.png', 'jpg')->save('photo.jpg');
+```
+
+See the new SDK's README for the full API: <https://github.com/QaamGo/api2convert-php>
+
+---
+
 Online Convert API version 2 PHP SDK v 4.1
 ==========================================
 

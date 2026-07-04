@@ -4,6 +4,7 @@
   "type": "library",
   "keywords": ["qaamgo", "online-convert", "php", "sdk", "api", "REST", "convert", "files"],
   "license": "Apache-2.0",
+  "abandoned": "api2convert/sdk",
   "require": {
     "php": "^8.3",
     "guzzlehttp/guzzle": "^7.10"
