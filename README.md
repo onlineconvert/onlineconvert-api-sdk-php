@@ -9,7 +9,7 @@
 **Install the new package:**
 
 ```bash
-composer require api2convert/sdk guzzlehttp/guzzle
+composer require api2convert/sdk
 ```
 
 **Convert a file** — what used to be a multi-step job flow (create job → add input → set
@@ -24,19 +24,26 @@ See the new SDK's README for the full API: <https://github.com/QaamGo/api2conver
 
 ---
 
-Online Convert API version 2 PHP SDK v 4.1
-==========================================
+Online Convert API version 2 PHP SDK
+====================================
 
-This SDK provides a code base to interact with the API version 2 of [api2convert.com](http://www.api2convert.com/)
+This SDK provides a code base to interact with the API version 2 of [api2convert.com](https://www.api2convert.com/)
 
 Requirements
 ------------
-This release supports PHP 8.0 and later.
+- PHP 8.3 or later 
+- `guzzlehttp/guzzle`
 
 [![Tests](https://github.com/onlineconvert/onlineconvert-api-sdk-php/actions/workflows/ci.yml/badge.svg)](https://github.com/onlineconvert/onlineconvert-api-sdk-php/actions/workflows/ci.yml)
 
 Installation
 ------------
+
+> [!WARNING]
+> This package is abandoned. New integrations should use
+> [`api2convert/sdk`](https://packagist.org/packages/api2convert/sdk) instead — see
+> [Migrating to the new SDK](#migrating-to-the-new-sdk) above.
+
 The recommended way to install is through [Composer](https://getcomposer.org/).
 ```bash
 composer require qaamgo/onlineconvert-api-sdk
@@ -64,11 +71,11 @@ $syncJob = [
 	'input' => [
 	    [
 		'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_UPLOAD,
-		'source' => '~/example.png'
+		'source' => '/path/to/example.png'
 	    ],
 	    [
 		'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_REMOTE,
-		'source' => 'http://cdn.online-convert.com/images/logo-top.png'
+		'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png'
 	    ]
 	],
 	'conversion' => [
@@ -85,10 +92,11 @@ $asyncJob = [
 	'input' => [
 	    [
 		'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_UPLOAD,
-		'source' => '~/example.png'	            ],
+		'source' => '/path/to/example.png'
+	    ],
 	    [
 		'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_REMOTE,
-		'source' => 'http://cdn.online-convert.com/images/logo-top.png'
+		'source' => 'https://example-files.online-convert.com/raster%20image/png/example_small.png'
 	    ]
 	],
 	'conversion' => [
@@ -99,7 +107,7 @@ $asyncJob = [
 		'target' => 'mp4'
 	    ]
 	],
-	'callback' => 'http://alert.me/when/job/is/finished'
+	'callback' => 'https://example.com/when/job/is/finished'
 ];
 
 $syncJob = $syncApi->postFullJob($syncJob)->getJobCreated();
@@ -108,97 +116,27 @@ $asyncJob = $asyncApi->postFullJob($asyncJob)->getJobCreated();
 var_dump($syncJob, $asyncJob);
 ```
 
-### Sending a job with a gdrive_picker input
 
-#### What is google drive picker
-Google drive picker allows you to access files stored in your google drive account.
-
-You can find information about it in [the official page](https://developers.google.com/picker/)
-
-**Meaning of each field**:
-* type
-  * Specifies that we want to use the google drive picker input
-* source
-  * This must contain the **FILE ID** given back by the google drive picker
-* credentials
-  * This must be an array containing the credentials for the selected file
-  * At the moment you only need to pass the **"token"** field inside it
-    *  The **"token"** field is returned by the google drive picker when a file is selected
-* content_type
-  * This field is mandatory when you select a [Google Document](https://developers.google.com/drive/v3/web/mime-types)
-  * You can leave this field empty if you are selecting any other kind of file
-    * EG: pdf, png, zip...
-* filename
-  * This is the file name of the google drive picker file
-  * If this field is not sent the file will be downloaded with the name `output.<extension>`
-
-```
-$job = [
-    'input' => [
-        [
-            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_GDRIVE_PICKER,
-            'source' => '<put google drive picker file id here>',
-            'credentials' => [
-                'token' => '<put google drive picker token for the selected file here>'
-            ],
-            'content_type' => '<if this is a specific google document>',
-            'filename' => '<name of the input file>'
-        ]
-    ],
-    'conversion' => [
-        [
-            'target' => 'png'
-        ]
-    ]
-];
-```
-
-After this just follow the previous examples on how to effectively send the job to the API.
-
-#### Sending a job using Cloud storage providers
-
-The following is an example to send a job where we want to convert a file that we have stored in our Amazon S3 storage.
-
-If you want to know more please check our cloud storage **[API documentation](http://apiv2.online-convert.com/#cloud_storage)**
-
-```
-$job = [
-    'input' => [
-        [
-            'type' => \OnlineConvert\Endpoint\InputEndpoint::INPUT_TYPE_CLOUD,
-            'source' => 'amazons3',
-            'parameters' => [
-                'bucket' => 'your.bucket.name',
-                'file' => 'the complete path to the file',
-            ],
-            'credentials' => [
-                'accesskeyid' => 'your access key id',
-                'secretaccesskey' => 'your secret access key',
-            ]
-        ]
-    ],
-    'conversion' => [
-        [
-            'target' => 'png'
-        ]
-    ]
-];
-```
-
-After this just follow the previous examples on how to effectively send the job to the API.
 
 #### Downloading the Converted Files
 
 You can download the converted files using the following code snippet:
 
-```
+```php
 require_once __DIR__ . '/vendor/autoload.php';
 
 $config = new \OnlineConvert\Configuration();
 $config->setApiKey('main', 'PUT YOUR API KEY HERE');
 
-// Remember to specify your own downloads folder.
-$config->downloadFolder = __DIR__ . '/downloads';
+// Remember to specify your own downloads folder. The SDK does not create it for you —
+// downloading into a folder that does not exist fails with a Guzzle RuntimeException.
+$downloadFolder = __DIR__ . '/downloads';
+
+if (!is_dir($downloadFolder) && !mkdir($downloadFolder, 0775, true) && !is_dir($downloadFolder)) {
+    throw new \RuntimeException('Could not create the download folder: ' . $downloadFolder);
+}
+
+$config->downloadFolder = $downloadFolder;
 
 $client = new \OnlineConvert\Client\OnlineConvertClient($config, 'main');
 $syncApi = new \OnlineConvert\Api($client);
@@ -229,14 +167,14 @@ Advanced usage
 
 >The class **\OnlineConvert\Api::class** has some shortcut methods that links it to  the endpoints classes *(EG: **\OnlineConvert\Api::postFullJob()**)*, but from the class you can call the real endpoint and their methods.
 
->Also, you can create endpoint classes one by one if you like. For this, check **\OnlineConvert\Endpoint\Abstracted::_construct()**
+>Also, you can create endpoint classes one by one if you like. For this, check **\OnlineConvert\Endpoint\Abstracted::__construct()**
 
 >**IMPORTANT:** The class **\OnlineConvert\Endpoint\JobsEndpoint** can be used to send both synchronous and asynchronuos jobs; check **\OnlineConvert\Endpoint\JobsEndpoint::setAsync()**
 
 >You can also set up different headers into the client, and do some process using the token of a job.
 
 
-```
+```php
     $config = new \OnlineConvert\Configuration();
     $client = new \OnlineConvert\Client\OnlineConvertClient($config);
     $syncApi = new \OnlineConvert\Api($client);
@@ -246,9 +184,8 @@ Advanced usage
     //Option 1
     $ep->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
 
-    //Option 2
+    //Option 2 (every endpoint shares the same client instance, so this affects $ep too)
     //$client->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_API_KEY, 'YOUR API KEY');
-    //$ep->setClient($client);
 
     $job = $ep->postJob([]);
 
@@ -256,11 +193,11 @@ Advanced usage
 
     //WORK WITH TOKENS
     //OPTION 1
-    $input = $ip->setUserToken($a['token'])->postJobInputRemote('http://www.online-convert.com/', $a['id']);
+    $input = $ip->setUserToken($job['token'])->postJobInputRemote('https://www.online-convert.com/', $job['id']);
 
     //Option 2 (Apply also the previous options to set a header)
-    //$ip->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_JOB_TOKEN, $a['token']);
-    //$b = $ip->postJobInputRemote('http://www.online-convert.com/', $a['id']);
+    //$ip->getClient()->setHeader(\OnlineConvert\Client\Interfaced::HEADER_OC_JOB_TOKEN, $job['token']);
+    //$input = $ip->postJobInputRemote('https://www.online-convert.com/', $job['id']);
 
     var_dump($job, $input);
 ```
@@ -274,24 +211,24 @@ Advanced usage
 - Send a job request
 - Take the following keys from a job: **server** and **id**. You can use **\OnlineConvert\Api** or **\OnlineConvert\Endpoint\JobsEndpoint** to get the job information. You will get something like:
 
-```
+```text
 	[
 	    [id] => 00000000-0000-0000-0000-000000000000
 	    [token] => some_token_here
 		    ...
-	    [server] => http://www9.online-convert.com/dl
+	    [server] => https://www2.api2convert.com/v2/dl/web7
 	    ...
 	]
 ```
 - Now with this information you can make this call:
 
 ```php
-\OnlineConvert\Client\OnlineConvertClient->generateUrl(\OnlineConvert\Endpoint\Resources::URL_POST_FILE, ['server' => $server, 'job_id' => $jobId])
+$uploadUrl = $client->generateUrl(\OnlineConvert\Endpoint\Resources::URL_POST_FILE, ['server' => $server, 'job_id' => $jobId]);
 ```
 
 - Also these token can be useful for some operations that you might want to share with your users
 
-#### Uploading files directly to the [Online-Convert.com](http://www.online-convert.com/) servers via AJAX
+#### Uploading files directly to the [Online-Convert.com](https://www.online-convert.com/) servers via AJAX
 
 > **Real life case:** I want to send our user files directly to the API, because sending them to my app first and then to the API costs too much time.
 
@@ -338,3 +275,8 @@ $(document).ready(function () {
         });
     });
 ```
+
+License
+-------
+
+Apache-2.0 — see [LICENSE](LICENSE).
