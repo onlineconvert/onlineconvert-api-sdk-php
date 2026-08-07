@@ -7,7 +7,7 @@
   "abandoned": "api2convert/sdk",
   "require": {
     "php": "^8.3",
-    "guzzlehttp/guzzle": "^7.10"
+    "guzzlehttp/guzzle": "^7.15.2"
   },
   "require-dev": {
     "phpunit/phpunit": "^12.5.22",
