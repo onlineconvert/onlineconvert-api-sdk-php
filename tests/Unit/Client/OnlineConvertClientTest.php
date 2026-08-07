@@ -2,6 +2,10 @@
 
 namespace Test\OnlineConvert\Unit\Client;
 
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
 use OnlineConvert\Client\OnlineConvertClient;
 use OnlineConvert\Configuration;
 use OnlineConvert\Endpoint\Resources;
@@ -123,5 +127,53 @@ class OnlineConvertClientTest extends TestCase
                 'expected' => 2
             ],
         ];
+    }
+
+    public function testCertificateVerificationIsEnabledByDefault()
+    {
+        $this->assertTrue($this->captureTransportOptions()['verify']);
+    }
+
+    public function testCertificateVerificationIsEnabledByDefaultOverHttps()
+    {
+        $this->config->https = true;
+
+        $this->assertTrue($this->captureTransportOptions()['verify']);
+    }
+
+    public function testCertificateVerificationCanBeDisabledByTheCaller()
+    {
+        $this->config->setOption('verify', false);
+
+        $this->assertFalse($this->captureTransportOptions()['verify']);
+    }
+
+    public function testCertificateVerificationAcceptsACustomCaBundle()
+    {
+        $caBundle = '/etc/ssl/certs/some-ca-bundle.pem';
+
+        $this->config->setOption('verify', $caBundle);
+
+        $this->assertSame($caBundle, $this->captureTransportOptions()['verify']);
+    }
+
+    /**
+     * Builds the client against a mocked handler and returns the options the transport was given
+     *
+     * @return array
+     */
+    private function captureTransportOptions()
+    {
+        $history = [];
+
+        $stack = HandlerStack::create(new MockHandler([new Response(200, [], '{}')]));
+        $stack->push(Middleware::history($history));
+
+        $this->config->setOption('handler', $stack);
+
+        $this->client = new OnlineConvertClient($this->config, 'main');
+        $this->client->getClient()->request('GET', 'jobs');
+
+        return $history[0]['options'];
     }
 }

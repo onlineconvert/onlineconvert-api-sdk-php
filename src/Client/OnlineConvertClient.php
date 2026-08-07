@@ -70,9 +70,13 @@ class OnlineConvertClient implements Interfaced
         $this->config = $configuration;
         $config       = $configuration->getOptions();
 
+        // The API is served over HTTPS only, so the peer certificate must be verified.
+        // A caller can still opt out, or point at a custom CA bundle, through
+        // Configuration::setOption('verify', ...).
+        $config['verify'] = $config['verify'] ?? true;
+
         if ($this->config->https) {
-            $this->host       = Resources::HTTPS_HOST;
-            $config['verify'] = false;
+            $this->host = Resources::HTTPS_HOST;
         } else {
             $this->host = Resources::HTTP_HOST;
         }
